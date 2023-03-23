@@ -1,0 +1,87 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Spiral\Livewire\Bootloader;
+
+use Spiral\Boot\AbstractKernel;
+use Spiral\Boot\Bootloader\Bootloader;
+use Spiral\Boot\DirectoriesInterface;
+use Spiral\Bootloader\Security\EncrypterBootloader;
+use Spiral\Core\FactoryInterface;
+use Spiral\Livewire\Component\ChecksumManager;
+use Spiral\Livewire\Component\ChecksumManagerInterface;
+use Spiral\Livewire\Component\PropertyHasher;
+use Spiral\Livewire\Component\PropertyHasherInterface;
+use Spiral\Livewire\Component\Registry\ComponentProcessorRegistry;
+use Spiral\Livewire\Component\Registry\ComponentRegistry;
+use Spiral\Livewire\Component\Registry\ComponentRegistryInterface;
+use Spiral\Livewire\Component\Registry\Processor\ProcessorInterface;
+use Spiral\Livewire\Config\LivewireConfig;
+use Spiral\Livewire\Controller\LivewireController;
+use Spiral\Livewire\Twig\Extension\LivewireExtension;
+use Spiral\Livewire\WireTrait;
+use Spiral\Router\Loader\Configurator\RoutingConfigurator;
+use Spiral\Tokenizer\Bootloader\TokenizerListenerBootloader;
+use Spiral\Twig\Bootloader\TwigBootloader;
+use Spiral\Views\Bootloader\ViewsBootloader;
+
+final class LivewireBootloader extends Bootloader
+{
+    use WireTrait;
+
+    protected const DEPENDENCIES = [
+        TokenizerListenerBootloader::class,
+        TwigBootloader::class,
+        EncrypterBootloader::class,
+        ConfigBootloader::class,
+        ComponentMiddlewareBootloader::class,
+        ListenerBootloader::class,
+    ];
+
+    protected const SINGLETONS = [
+        ComponentRegistryInterface::class => ComponentRegistry::class,
+        ComponentProcessorRegistry::class => ComponentProcessorRegistry::class,
+        ChecksumManagerInterface::class => ChecksumManager::class,
+        PropertyHasherInterface::class => PropertyHasher::class,
+    ];
+
+    public function init(TwigBootloader $twig, ViewsBootloader $views, DirectoriesInterface $dirs): void
+    {
+        $twig->addExtension(LivewireExtension::class);
+        $views->addDirectory('livewire', rtrim($dirs->get('vendor'), '/').'/spiral-packages/livewire/views');
+    }
+
+    public function boot(
+        LivewireConfig $config,
+        FactoryInterface $factory,
+        AbstractKernel $kernel,
+        ComponentProcessorRegistry $registry,
+        RoutingConfigurator $routing
+    ): void {
+        $this->registerComponentProcessors($config, $factory, $kernel, $registry);
+
+        $routing
+            ->add(name: 'livewire.message', pattern: '/livewire/message/<component>')
+            ->action(LivewireController::class, 'message')
+            ->methods('POST');
+    }
+
+    private function registerComponentProcessors(
+        LivewireConfig $config,
+        FactoryInterface $factory,
+        AbstractKernel $kernel,
+        ComponentProcessorRegistry $registry
+    ): void {
+        foreach ($config->getProcessors() as $processor) {
+            $processor = $this->wire($processor, $factory);
+
+            \assert($processor instanceof ProcessorInterface);
+            $registry->addProcessor($processor);
+        }
+
+        $kernel->bootstrapped(static function (ComponentProcessorRegistry $registry): void {
+            $registry->process();
+        });
+    }
+}
