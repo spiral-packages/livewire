@@ -12,7 +12,7 @@ use Twig\NodeVisitor\NodeVisitorInterface;
 
 /**
  * This class handles the replacement of inline HTML wire directives
- * like `<wire:counter foo="bar" />`.
+ * like `<livewire:counter foo="bar" />`.
  */
 final class LivewireNodeVisitor implements NodeVisitorInterface
 {
