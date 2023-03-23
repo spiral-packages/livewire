@@ -19,11 +19,9 @@ use Spiral\Livewire\Component\Registry\ComponentRegistryInterface;
 use Spiral\Livewire\Component\Registry\Processor\ProcessorInterface;
 use Spiral\Livewire\Config\LivewireConfig;
 use Spiral\Livewire\Controller\LivewireController;
-use Spiral\Livewire\Twig\Extension\LivewireExtension;
 use Spiral\Livewire\WireTrait;
 use Spiral\Router\Loader\Configurator\RoutingConfigurator;
 use Spiral\Tokenizer\Bootloader\TokenizerListenerBootloader;
-use Spiral\Twig\Bootloader\TwigBootloader;
 use Spiral\Views\Bootloader\ViewsBootloader;
 
 final class LivewireBootloader extends Bootloader
@@ -32,7 +30,6 @@ final class LivewireBootloader extends Bootloader
 
     protected const DEPENDENCIES = [
         TokenizerListenerBootloader::class,
-        TwigBootloader::class,
         EncrypterBootloader::class,
         ConfigBootloader::class,
         ComponentMiddlewareBootloader::class,
@@ -46,9 +43,8 @@ final class LivewireBootloader extends Bootloader
         PropertyHasherInterface::class => PropertyHasher::class,
     ];
 
-    public function init(TwigBootloader $twig, ViewsBootloader $views, DirectoriesInterface $dirs): void
+    public function init(ViewsBootloader $views, DirectoriesInterface $dirs): void
     {
-        $twig->addExtension(LivewireExtension::class);
         $views->addDirectory('livewire', rtrim($dirs->get('vendor'), '/').'/spiral-packages/livewire/views');
     }
 
