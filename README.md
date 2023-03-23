@@ -61,9 +61,9 @@ Here's an example of how to do that:
 
 When the **TwigBootloader** is registered, it provides the `Spiral\Livewire\Twig\Extension\LivewireExtension` extension
 that allows to use the **livewire_styles** and **livewire_scripts** Twig functions and
-`Spiral\Livewire\Twig\NodeVisitorLivewireNodeVisitor`.
+`Spiral\Livewire\Twig\NodeVisitor\LivewireNodeVisitor`.
 - **livewire_styles** and **livewire_scripts** - These functions are used to include the required Livewire CSS and JavaScript code.
-- **NodeVisitorLivewireNodeVisitor** - This node visitor is responsible for processing and transforming Livewire
+- **LivewireNodeVisitor** - This node visitor is responsible for processing and transforming Livewire
   component tags, such as <livewire:counter foo="bar" />, into rendered HTML output with the component's initial state.
 
 ## Configuration
