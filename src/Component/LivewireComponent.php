@@ -18,6 +18,7 @@ use Spiral\Livewire\Exception\Component\RenderException;
 use Spiral\Livewire\Request;
 use Spiral\Livewire\Response;
 use Spiral\Livewire\Str;
+use Spiral\Router\RouterInterface;
 use Spiral\Views\ViewInterface;
 use Spiral\Views\ViewsInterface;
 
@@ -60,7 +61,9 @@ abstract class LivewireComponent
     private ResolverInterface $resolver;
     private EventDispatcherInterface $dispatcher;
     private PropertyHasherInterface $hasher;
+    private RouterInterface $router;
     private bool $shouldSkipRender = false;
+    private ?string $redirectTo = null;
 
     /**
      * @return non-empty-string
@@ -126,6 +129,32 @@ abstract class LivewireComponent
     }
 
     /**
+     * @param non-empty-string $url
+     */
+    public function redirectTo(string $url): void
+    {
+        $this->redirectTo = $url;
+
+        $this->shouldSkipRender = true;
+    }
+
+    /**
+     * @param non-empty-string $route
+     */
+    public function redirectToRoute(string $route, array $parameters = []): void
+    {
+        $this->redirectTo((string) $this->router->uri($route, $parameters));
+    }
+
+    /**
+     * @return ?non-empty-string
+     */
+    public function getRedirectTo(): ?string
+    {
+        return $this->redirectTo;
+    }
+
+    /**
      * @throws BadMethodCallException
      */
     public function __call(string $method, mixed $params): void
@@ -156,7 +185,8 @@ abstract class LivewireComponent
         ViewsInterface $views,
         ResolverInterface $resolver,
         PropertyHasherInterface $hasher,
-        EventDispatcherInterface $dispatcher
+        EventDispatcherInterface $dispatcher,
+        RouterInterface $router
     ): void {
         $this->name = $name;
         $this->template = $template;
@@ -164,6 +194,7 @@ abstract class LivewireComponent
         $this->resolver = $resolver;
         $this->hasher = $hasher;
         $this->dispatcher = $dispatcher;
+        $this->router = $router;
 
         $this->id = Str::random(20);
     }

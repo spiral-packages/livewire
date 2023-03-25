@@ -86,6 +86,11 @@ final class ConfigBootloader extends Bootloader
                             method: 'onComponentDehydrate',
                             priority: 30
                         ),
+                        new EventListener(
+                            listener: Listener\SupportRedirects::class,
+                            method: 'onComponentDehydrate',
+                            priority: 40
+                        ),
                     ],
                     ComponentDehydrateSubsequent::class => [
                         new EventListener(

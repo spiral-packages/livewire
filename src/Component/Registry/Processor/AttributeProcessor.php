@@ -13,6 +13,7 @@ use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Component\PropertyHasherInterface;
 use Spiral\Livewire\Component\Registry\ComponentRegistryInterface;
 use Spiral\Livewire\Str;
+use Spiral\Router\RouterInterface;
 use Spiral\Tokenizer\TokenizationListenerInterface;
 use Spiral\Tokenizer\TokenizerListenerRegistryInterface;
 use Spiral\Views\ViewsInterface;
@@ -58,9 +59,8 @@ final class AttributeProcessor implements TokenizationListenerInterface, Process
                 $this->container->get(ViewsInterface::class),
                 $this->container->get(ResolverInterface::class),
                 $this->container->get(PropertyHasherInterface::class),
-                $this->container->has(EventDispatcherInterface::class)
-                    ? $this->container->get(EventDispatcherInterface::class)
-                    : null
+                $this->container->get(EventDispatcherInterface::class),
+                $this->container->get(RouterInterface::class)
             );
 
             $this->registry->add($component);
