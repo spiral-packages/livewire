@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Spiral\Livewire\Component\Trait;
 
 use Spiral\Livewire\Dot;
+use Spiral\Livewire\Event\Component\ComponentCalledMethod;
+use Spiral\Livewire\Event\Component\ComponentCallingMethod;
 use Spiral\Livewire\Event\Component\ComponentUpdated;
 use Spiral\Livewire\Event\Component\ComponentUpdating;
 use Spiral\Livewire\Exception\Component\BadMethodCallException;
@@ -53,7 +55,7 @@ trait HandleActionTrait
                 $this->{$name} = $value;
             }
 
-            $rehash && $this->hasher->hash($this->getId(), $name, $value);
+            $rehash && $this->livewireHasher->hash($this->getId(), $name, $value);
         });
     }
 
@@ -87,7 +89,7 @@ trait HandleActionTrait
             $this->{$beforeNestedMethod}($value, $keyAfterLastDot);
         }
 
-        $this->dispatcher->dispatch(new ComponentUpdating($this, $name, $value));
+        $this->livewireDispatcher->dispatch(new ComponentUpdating($this, $name, $value));
 
         $callback($name, $value);
 
@@ -101,7 +103,7 @@ trait HandleActionTrait
             $this->{$afterNestedMethod}($value, $keyAfterLastDot);
         }
 
-        $this->dispatcher->dispatch(new ComponentUpdated($this, $name, $value));
+        $this->livewireDispatcher->dispatch(new ComponentUpdated($this, $name, $value));
     }
 
     /**
@@ -165,9 +167,18 @@ trait HandleActionTrait
             throw new NonPublicComponentMethodCall(sprintf('Component method not found: `%s`.', $method));
         }
 
+        /** @var ComponentCallingMethod $event */
+        $event = $this->livewireDispatcher->dispatch(new ComponentCallingMethod($this, $method, $params));
+
+        if ($event->shouldSkipCalling) {
+            return;
+        }
+
         $returned = $this->{$method}(
-            $this->resolver->resolveArguments(new \ReflectionMethod($this, $method), $params)
+            $this->livewireResolver->resolveArguments(new \ReflectionMethod($this, $method), $params)
         );
+
+        $this->livewireDispatcher->dispatch(new ComponentCalledMethod($this, $method, $params));
 
         $captureReturnValueCallback && $captureReturnValueCallback($returned);
     }

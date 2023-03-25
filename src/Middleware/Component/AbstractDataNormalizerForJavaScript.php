@@ -6,7 +6,7 @@ namespace Spiral\Livewire\Middleware\Component;
 
 abstract class AbstractDataNormalizerForJavaScript
 {
-    protected function reindexArrayWithNumericKeysOtherwiseJavaScriptWillMessWithTheOrder(mixed $value): array
+    protected function reindexArrayWithNumericKeysOtherwiseJavaScriptWillMessWithTheOrder(mixed $value): mixed
     {
         // Make sure string keys are last (but not ordered) and numeric keys are ordered.
         // JSON.parse will do this on the frontend, so we'll get ahead of it.
@@ -23,7 +23,7 @@ abstract class AbstractDataNormalizerForJavaScript
         // array_merge will reindex in some cases so we stick to array_replace
         $normalizedData = array_replace($itemsWithNumericKeys, $itemsWithStringKeys);
 
-        $output = array_map(function (mixed $value): array {
+        $output = array_map(function (mixed $value): mixed {
             return $this->reindexArrayWithNumericKeysOtherwiseJavaScriptWillMessWithTheOrder($value);
         }, $normalizedData);
 

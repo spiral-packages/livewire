@@ -40,37 +40,38 @@ abstract class LivewireComponent
     protected ViewsInterface $views;
     protected ViewInterface $preRenderedView;
     protected array $renderContext = [];
+    protected array $validationContext = [];
     protected array $forStack = [];
 
     /**
      * @var non-empty-string
      */
-    private string $name;
+    private string $livewireName;
 
     /**
      * @var non-empty-string
      */
-    private string $id;
+    private string $livewireId;
 
     /**
      * @var non-empty-string
      */
-    private string $template;
+    private string $livewireTemplate;
 
-    private array $errors = [];
-    private ResolverInterface $resolver;
-    private EventDispatcherInterface $dispatcher;
-    private PropertyHasherInterface $hasher;
-    private RouterInterface $router;
-    private bool $shouldSkipRender = false;
-    private ?string $redirectTo = null;
+    private array $livewireErrors = [];
+    private ResolverInterface $livewireResolver;
+    private EventDispatcherInterface $livewireDispatcher;
+    private PropertyHasherInterface $livewireHasher;
+    private RouterInterface $livewireRouter;
+    private bool $livewireShouldSkipRender = false;
+    private ?string $livewireRedirectTo = null;
 
     /**
      * @return non-empty-string
      */
     public function getName(): string
     {
-        return $this->name;
+        return $this->livewireName;
     }
 
     /**
@@ -78,7 +79,7 @@ abstract class LivewireComponent
      */
     public function getId(): string
     {
-        return $this->id;
+        return $this->livewireId;
     }
 
     /**
@@ -87,40 +88,49 @@ abstract class LivewireComponent
      */
     public function renderToView(): ViewInterface
     {
-        $this->dispatcher->dispatch(new ComponentRendering(component: $this));
+        $this->livewireDispatcher->dispatch(new ComponentRendering(component: $this));
 
         $view = method_exists($this, 'render')
-            ? $this->render(...$this->resolver->resolveArguments(new \ReflectionMethod($this, 'render')))
-            : $this->views->get($this->template);
+            ? $this->render(...$this->livewireResolver->resolveArguments(new \ReflectionMethod($this, 'render')))
+            : $this->views->get($this->livewireTemplate);
 
         if (!$view instanceof ViewInterface) {
             throw new RenderException(sprintf('Method `render` must return instance of `%s`.', ViewInterface::class));
         }
 
-        $this->dispatcher->dispatch(new ComponentRendered(component: $this, view: $view));
+        $this->livewireDispatcher->dispatch(new ComponentRendered(component: $this, view: $view));
 
         return $this->preRenderedView = $view;
     }
 
     public function output(): ?string
     {
-        if ($this->shouldSkipRender) {
+        if ($this->livewireShouldSkipRender) {
             return null;
         }
 
         $view = $this->preRenderedView;
         $properties = $this->getPublicPropertiesDefinedBySubClass();
 
-        $output = $view->render(array_merge($this->renderContext, $properties));
+        $output = $view->render(array_merge(
+            $this->renderContext,
+            $properties,
+            ['errors' => $this->getValidationErrors()]
+        ));
 
-        $this->dispatcher->dispatch(new ViewRender(view: $view, output: $output));
+        $this->livewireDispatcher->dispatch(new ViewRender(view: $view, output: $output));
 
         return $output;
     }
 
-    public function setValidationErrors(array $errors): void
+    public function setValidationErrors(array $errors = []): void
     {
-        $this->errors = $errors;
+        $this->livewireErrors = $errors;
+    }
+
+    public function getValidationErrors(): array
+    {
+        return $this->livewireErrors;
     }
 
     public function getForStack(): array
@@ -133,9 +143,9 @@ abstract class LivewireComponent
      */
     public function redirectTo(string $url): void
     {
-        $this->redirectTo = $url;
+        $this->livewireRedirectTo = $url;
 
-        $this->shouldSkipRender = true;
+        $this->livewireShouldSkipRender = true;
     }
 
     /**
@@ -143,7 +153,7 @@ abstract class LivewireComponent
      */
     public function redirectToRoute(string $route, array $parameters = []): void
     {
-        $this->redirectTo((string) $this->router->uri($route, $parameters));
+        $this->redirectTo((string) $this->livewireRouter->uri($route, $parameters));
     }
 
     /**
@@ -151,7 +161,12 @@ abstract class LivewireComponent
      */
     public function getRedirectTo(): ?string
     {
-        return $this->redirectTo;
+        return $this->livewireRedirectTo;
+    }
+
+    public function getValidationContext(): array
+    {
+        return $this->validationContext;
     }
 
     /**
@@ -188,14 +203,14 @@ abstract class LivewireComponent
         EventDispatcherInterface $dispatcher,
         RouterInterface $router
     ): void {
-        $this->name = $name;
-        $this->template = $template;
+        $this->livewireName = $name;
+        $this->livewireTemplate = $template;
         $this->views = $views;
-        $this->resolver = $resolver;
-        $this->hasher = $hasher;
-        $this->dispatcher = $dispatcher;
-        $this->router = $router;
+        $this->livewireResolver = $resolver;
+        $this->livewireHasher = $hasher;
+        $this->livewireDispatcher = $dispatcher;
+        $this->livewireRouter = $router;
 
-        $this->id = Str::random(20);
+        $this->livewireId = Str::random(20);
     }
 }

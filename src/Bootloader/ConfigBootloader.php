@@ -9,11 +9,13 @@ use Spiral\Config\ConfiguratorInterface;
 use Spiral\Events\Config\EventListener;
 use Spiral\Livewire\Component\Registry\Processor\AttributeProcessor;
 use Spiral\Livewire\Config\LivewireConfig;
+use Spiral\Livewire\Event\Component\ComponentCallingMethod;
 use Spiral\Livewire\Event\Component\ComponentDehydrate;
 use Spiral\Livewire\Event\Component\ComponentDehydrateInitial;
 use Spiral\Livewire\Event\Component\ComponentDehydrateSubsequent;
 use Spiral\Livewire\Event\Component\ComponentHydrateInitial;
 use Spiral\Livewire\Event\Component\ComponentHydrateSubsequent;
+use Spiral\Livewire\Event\Component\ComponentUpdating;
 use Spiral\Livewire\Event\Component\FlushState;
 use Spiral\Livewire\Listener\Component as Listener;
 use Spiral\Livewire\Middleware\Component as Middleware;
@@ -72,24 +74,29 @@ final class ConfigBootloader extends Bootloader
                     ],
                     ComponentDehydrate::class => [
                         new EventListener(
-                            listener: Listener\SupportEvents::class,
+                            listener: Listener\SupportValidation::class,
                             method: 'onComponentDehydrate',
                             priority: 10
                         ),
                         new EventListener(
-                            listener: Listener\SupportStacks::class,
+                            listener: Listener\SupportEvents::class,
                             method: 'onComponentDehydrate',
                             priority: 20
                         ),
                         new EventListener(
-                            listener: Listener\SupportChildren::class,
+                            listener: Listener\SupportStacks::class,
                             method: 'onComponentDehydrate',
                             priority: 30
                         ),
                         new EventListener(
-                            listener: Listener\SupportRedirects::class,
+                            listener: Listener\SupportChildren::class,
                             method: 'onComponentDehydrate',
                             priority: 40
+                        ),
+                        new EventListener(
+                            listener: Listener\SupportRedirects::class,
+                            method: 'onComponentDehydrate',
+                            priority: 50
                         ),
                     ],
                     ComponentDehydrateSubsequent::class => [
@@ -99,6 +106,16 @@ final class ConfigBootloader extends Bootloader
                             priority: 10
                         ),
                     ],
+                    ComponentUpdating::class => new EventListener(
+                        listener: Listener\SupportValidation::class,
+                        method: 'onComponentUpdating',
+                        priority: 10
+                    ),
+                    ComponentCallingMethod::class => new EventListener(
+                        listener: Listener\SupportValidation::class,
+                        method: 'onComponentCallingMethod',
+                        priority: 10
+                    ),
                     FlushState::class => new EventListener(
                         listener: Listener\SupportStacks::class,
                         method: 'onFlushState',

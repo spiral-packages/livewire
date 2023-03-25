@@ -99,7 +99,7 @@ trait ReceiveEvent
         $method = $this->getEventsAndHandlers()[$event];
 
         $this->callMethod($method, $params, function ($returned) use ($event, $id) {
-            $this->dispatcher->dispatch(new ActionReturned($this, $event, $returned, $id));
+            $this->livewireDispatcher->dispatch(new ActionReturned($this, $event, $returned, $id));
         });
     }
 }
