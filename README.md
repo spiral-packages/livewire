@@ -209,7 +209,7 @@ protected const LOAD = [
 ];
 ```
 
-After adding the ValidationBootloader class, you must implement the `Spiral\Filters\Model\ShouldBeValidated`
+After adding the ValidationBootloader class, you must implement the `Spiral\Livewire\Validation\ShouldBeValidated`
 interface in your Livewire component and define the `validationRules` method to specify your validation rules.
 This method should return an array of validation rules for each property that requires validation.
 
@@ -222,9 +222,9 @@ you could define the component like this:
 ```php
 namespace App\Endpoint\Web\Livewire\Component;
 
-use Spiral\Filters\Model\ShouldBeValidated;
 use Spiral\Livewire\Attribute\Component;
 use Spiral\Livewire\Component\LivewireComponent;
+use Spiral\Livewire\Validation\ShouldBeValidated;
 
 #[Component(name: 'contact-form', template: 'components/contact-form.twig')]
 final class ContactForm extends LivewireComponent implements ShouldBeValidated

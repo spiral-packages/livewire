@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Spiral\Livewire\Validation\Spiral;
 
-use Spiral\Filters\Model\ShouldBeValidated;
 use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Exception\Validation\ValidationException;
+use Spiral\Livewire\Validation\ShouldBeValidated;
 use Spiral\Livewire\Validation\ValidatorInterface;
 use Spiral\Validator\Validation;
 
