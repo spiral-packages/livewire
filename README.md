@@ -197,8 +197,8 @@ If you click the "+" button, the page should automatically update without a page
 
 ### Validation
 
-The first step in enabling validation in your Livewire components is to make sure that the `spiral\validator`
-package is installed and properly configured in your application.
+The first step in enabling validation in your Livewire components is to make sure that `spiral\validator` or
+`spiral-packages/laravel-validator` packages are installed and properly configured in your application.
 Once you have ensured that the validator package is installed, you will need to add the
 `Spiral\Livewire\Bootloader\ValidationBootloader` class to the list of bootloaders in your application:
 
@@ -212,12 +212,16 @@ protected const LOAD = [
 After adding the ValidationBootloader class, you must implement the `Spiral\Livewire\Validation\ShouldBeValidated`
 interface in your Livewire component and define the `validationRules` method to specify your validation rules.
 This method should return an array of validation rules for each property that requires validation.
+**Validation rules must be in the format supported by the validator you are using.**
 
 > **Notice**
-> The validation rules are described in the [validator documentation](https://spiral.dev/docs/validation-spiral/3.6/en#validation-dsl).
+> Validation rules are described in the [Spiral Validator](https://spiral.dev/docs/validation-spiral/3.6/en#validation-dsl),
+> [Laravel Validator](https://laravel.com/docs/10.x/validation#available-validation-rules) documentation.
 
 For example, if you want to validate the **name** and **email** fields of a ContactForm component,
-you could define the component like this:
+you could define the component like this.
+
+#### Spiral Validator
 
 ```php
 namespace App\Endpoint\Web\Livewire\Component;
@@ -246,7 +250,36 @@ final class ContactForm extends LivewireComponent implements ShouldBeValidated
     }
 ```
 
-In this example, the validationRules method returns an array of rules that specify that both name and email are
+#### Laravel Validator
+
+```php
+namespace App\Endpoint\Web\Livewire\Component;
+
+use Spiral\Livewire\Attribute\Component;
+use Spiral\Livewire\Component\LivewireComponent;
+use Spiral\Livewire\Validation\ShouldBeValidated;
+
+#[Component(name: 'contact-form', template: 'components/contact-form.twig')]
+final class ContactForm extends LivewireComponent implements ShouldBeValidated
+{
+    public string $name;
+    public string $email;
+
+    public function submit(): void
+    {
+        // This method will only be called if all the data is valid
+    }
+
+    public function validationRules(): array
+    {
+        return [
+            'name' => 'required',
+            'email' => 'required|email'
+        ];
+    }
+```
+
+In this examples, the validationRules method returns an array of rules that specify that both name and email are
 required fields, and that the email field must be a valid email address.
 
 - Validator can validate only single property when the property is updated. If the component is configured to update
