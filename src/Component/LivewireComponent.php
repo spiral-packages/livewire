@@ -7,12 +7,10 @@ namespace Spiral\Livewire\Component;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Spiral\Core\ResolverInterface;
 use Spiral\Livewire\Component\Trait\HandleActionTrait;
-use Spiral\Livewire\Component\Trait\InteractsWithProperties;
 use Spiral\Livewire\Component\Trait\ReceiveEvent;
 use Spiral\Livewire\Component\Trait\TracksRenderedChildren;
 use Spiral\Livewire\Event\Component\ComponentRendered;
 use Spiral\Livewire\Event\Component\ComponentRendering;
-use Spiral\Livewire\Event\Component\ViewRender;
 use Spiral\Livewire\Exception\Component\BadMethodCallException;
 use Spiral\Livewire\Exception\Component\RenderException;
 use Spiral\Livewire\Request;
@@ -33,7 +31,6 @@ use Spiral\Views\ViewsInterface;
 abstract class LivewireComponent
 {
     use HandleActionTrait;
-    use InteractsWithProperties;
     use ReceiveEvent;
     use TracksRenderedChildren;
 
@@ -103,26 +100,6 @@ abstract class LivewireComponent
         return $this->preRenderedView = $view;
     }
 
-    public function output(): ?string
-    {
-        if ($this->livewireShouldSkipRender) {
-            return null;
-        }
-
-        $view = $this->preRenderedView;
-        $properties = $this->getPublicPropertiesDefinedBySubClass();
-
-        $output = $view->render(array_merge(
-            $this->renderContext,
-            $properties,
-            ['errors' => $this->getValidationErrors()]
-        ));
-
-        $this->livewireDispatcher->dispatch(new ViewRender(view: $view, output: $output));
-
-        return $output;
-    }
-
     public function setValidationErrors(array $errors = []): void
     {
         $this->livewireErrors = $errors;
@@ -167,6 +144,21 @@ abstract class LivewireComponent
     public function getValidationContext(): array
     {
         return $this->validationContext;
+    }
+
+    public function getPreRenderedView(): ViewInterface
+    {
+        return $this->preRenderedView;
+    }
+
+    public function getRenderContext(): array
+    {
+        return $this->renderContext;
+    }
+
+    public function shouldSkipRender(): bool
+    {
+        return $this->livewireShouldSkipRender;
     }
 
     /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Spiral\Livewire\Validation\Spiral;
 
+use Spiral\Livewire\Component\DataAccessorInterface;
 use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Exception\Validation\ValidationException;
 use Spiral\Livewire\Validation\ShouldBeValidated;
@@ -13,7 +14,8 @@ use Spiral\Validator\Validation;
 final class SpiralValidator implements ValidatorInterface
 {
     public function __construct(
-        private readonly Validation $validation
+        private readonly Validation $validation,
+        private readonly DataAccessorInterface $dataAccessor
     ) {
     }
 
@@ -24,7 +26,7 @@ final class SpiralValidator implements ValidatorInterface
         }
 
         $validator = $this->validation->validate(
-            $component->getPublicPropertiesDefinedBySubClass(),
+            $this->dataAccessor->getData($component),
             $component->validationRules(),
             $component->getValidationContext()
         );
@@ -34,17 +36,17 @@ final class SpiralValidator implements ValidatorInterface
         }
     }
 
-    public function validateProperty(\ReflectionProperty $property, mixed $value, LivewireComponent $component): void
+    public function validateProperty(string $property, mixed $value, LivewireComponent $component): void
     {
         if (!$component instanceof ShouldBeValidated) {
             return;
         }
 
         $validator = $this->validation->validate(
-            [$property->getName() => $value],
+            [$property => $value],
             array_filter(
                 $component->validationRules(),
-                static fn (string $key): bool => $key === $property->getName(),
+                static fn (string $key): bool => $key === $property,
                 \ARRAY_FILTER_USE_KEY
             ),
             $component->getValidationContext()

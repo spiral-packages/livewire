@@ -79,7 +79,7 @@ use Spiral\Livewire\Listener\Component\SupportChildren;
 use Spiral\Livewire\Listener\Component\SupportLocales;
 use Spiral\Livewire\Middleware\Component\CallHydrationHooks;
 use Spiral\Livewire\Middleware\Component\CallPropertyHydrationHooks;
-use Spiral\Livewire\Middleware\Component\HydratePublicProperties;
+use Spiral\Livewire\Middleware\Component\HydrateModelProperties;
 
 return [
     'listeners' => [
@@ -105,7 +105,7 @@ return [
     ],
     'hydration_middleware' => [
         // ...
-        HydratePublicProperties::class,
+        HydrateModelProperties::class,
         // ...
     ],
     'initial_dehydration_middleware' => [
@@ -159,11 +159,13 @@ Lets create a simple Livewire component **Counter**:
 namespace App\Endpoint\Web\Livewire\Component;
 
 use Spiral\Livewire\Attribute\Component;
+use Spiral\Livewire\Attribute\Model;
 use Spiral\Livewire\Component\LivewireComponent;
 
 #[Component(name: 'counter', template: 'components/counter.twig')]
 final class Counter extends LivewireComponent
 {
+    #[Model]
     public int $count = 0;
 
     public function increment(): void
@@ -227,13 +229,17 @@ you could define the component like this.
 namespace App\Endpoint\Web\Livewire\Component;
 
 use Spiral\Livewire\Attribute\Component;
+use Spiral\Livewire\Attribute\Model;
 use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Validation\ShouldBeValidated;
 
 #[Component(name: 'contact-form', template: 'components/contact-form.twig')]
 final class ContactForm extends LivewireComponent implements ShouldBeValidated
 {
+    #[Model]
     public string $name;
+
+    #[Model]
     public string $email;
 
     public function submit(): void
@@ -256,13 +262,17 @@ final class ContactForm extends LivewireComponent implements ShouldBeValidated
 namespace App\Endpoint\Web\Livewire\Component;
 
 use Spiral\Livewire\Attribute\Component;
+use Spiral\Livewire\Attribute\Model;
 use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Validation\ShouldBeValidated;
 
 #[Component(name: 'contact-form', template: 'components/contact-form.twig')]
 final class ContactForm extends LivewireComponent implements ShouldBeValidated
 {
+    #[Model]
     public string $name;
+
+    #[Model]
     public string $email;
 
     public function submit(): void

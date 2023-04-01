@@ -11,18 +11,24 @@ use Spiral\Bootloader\Security\EncrypterBootloader;
 use Spiral\Core\FactoryInterface;
 use Spiral\Livewire\Component\ChecksumManager;
 use Spiral\Livewire\Component\ChecksumManagerInterface;
+use Spiral\Livewire\Component\DataAccessor;
+use Spiral\Livewire\Component\DataAccessorInterface;
 use Spiral\Livewire\Component\PropertyHasher;
 use Spiral\Livewire\Component\PropertyHasherInterface;
 use Spiral\Livewire\Component\Registry\ComponentProcessorRegistry;
 use Spiral\Livewire\Component\Registry\ComponentRegistry;
 use Spiral\Livewire\Component\Registry\ComponentRegistryInterface;
 use Spiral\Livewire\Component\Registry\Processor\ProcessorInterface;
+use Spiral\Livewire\Component\Renderer;
+use Spiral\Livewire\Component\RendererInterface;
 use Spiral\Livewire\Config\LivewireConfig;
 use Spiral\Livewire\Controller\LivewireController;
 use Spiral\Livewire\WireTrait;
 use Spiral\Router\Loader\Configurator\RoutingConfigurator;
 use Spiral\Tokenizer\Bootloader\TokenizerListenerBootloader;
 use Spiral\Views\Bootloader\ViewsBootloader;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 final class LivewireBootloader extends Bootloader
 {
@@ -41,6 +47,9 @@ final class LivewireBootloader extends Bootloader
         ComponentProcessorRegistry::class => ComponentProcessorRegistry::class,
         ChecksumManagerInterface::class => ChecksumManager::class,
         PropertyHasherInterface::class => PropertyHasher::class,
+        RendererInterface::class => Renderer::class,
+        DataAccessorInterface::class => DataAccessor::class,
+        PropertyAccessorInterface::class => [self::class, 'initPropertyAccessor'],
     ];
 
     public function init(ViewsBootloader $views, DirectoriesInterface $dirs): void
@@ -79,5 +88,12 @@ final class LivewireBootloader extends Bootloader
         $kernel->bootstrapped(static function (ComponentProcessorRegistry $registry): void {
             $registry->process();
         });
+    }
+
+    private function initPropertyAccessor(): PropertyAccessorInterface
+    {
+        return PropertyAccess::createPropertyAccessorBuilder()
+            ->enableMagicMethods()
+            ->getPropertyAccessor();
     }
 }

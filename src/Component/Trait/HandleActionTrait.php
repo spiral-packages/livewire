@@ -25,7 +25,7 @@ trait HandleActionTrait
      */
     public function syncInput(string $name, mixed $value, bool $rehash = true): void
     {
-        $propertyName = $this->beforeFirstDot($name);
+        $propertyName = Str::before($name, '.');
 
         $this->callBeforeAndAfterSyncHooks($name, $value, function ($name, $value) use ($propertyName, $rehash) {
             if (!$this->propertyIsPublicAndNotDefinedOnBaseClass($propertyName)) {
@@ -36,11 +36,11 @@ trait HandleActionTrait
                 ));
             }
 
-            if ($this->containsDots($name)) {
+            if (str_contains($name, '.')) {
                 // Strip away model name.
-                $keyName = $this->afterFirstDot($name);
+                $keyName = Str::after($name, '.');
                 // Get model attribute to be filled.
-                $targetKey = $this->beforeFirstDot($keyName);
+                $targetKey = Str::before($keyName, '.');
 
                 // Get existing data from model property.
                 $results = [];
@@ -131,9 +131,9 @@ trait HandleActionTrait
             case '$toggle':
                 $prop = array_shift($params);
 
-                if ($this->containsDots($prop)) {
-                    $propertyName = $this->beforeFirstDot($prop);
-                    $targetKey = $this->afterFirstDot($prop);
+                if (str_contains($prop, '.')) {
+                    $propertyName = Str::before($prop, '.');
+                    $targetKey = Str::after($prop, '.');
                     $currentValue = Dot::get($this->{$propertyName}, $targetKey);
                 } else {
                     $currentValue = $this->{$prop};
@@ -206,5 +206,21 @@ trait HandleActionTrait
         }
 
         return false;
+    }
+
+    protected function propertyIsPublicAndNotDefinedOnBaseClass(string $propertyName): bool
+    {
+        $properties = array_filter(
+            (new \ReflectionObject($this))->getProperties(\ReflectionMethod::IS_PUBLIC),
+            static fn (\ReflectionProperty $property): bool => self::class === $property->class
+        );
+
+        foreach ($properties as $property) {
+            if ($property->getName() === $propertyName) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

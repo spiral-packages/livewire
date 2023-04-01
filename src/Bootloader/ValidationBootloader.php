@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Spiral\Livewire\Bootloader;
 
+use Psr\Container\ContainerInterface;
 use Spiral\Boot\Bootloader\Bootloader;
 use Spiral\Livewire\Validation\Laravel\LaravelValidator;
 use Spiral\Livewire\Validation\Spiral\SpiralValidator;
@@ -23,11 +24,11 @@ final class ValidationBootloader extends Bootloader
         ValidatorInterface::class => [self::class, 'initValidator'],
     ];
 
-    public function initValidator(ValidationInterface $validation): ValidatorInterface
+    public function initValidator(ContainerInterface $container, ValidationInterface $validation): ValidatorInterface
     {
         return match ($validation::class) {
-            Validation::class => new SpiralValidator($validation),
-            LaravelValidation::class => new LaravelValidator($validation)
+            Validation::class => $container->get(SpiralValidator::class),
+            LaravelValidation::class => $container->get(LaravelValidator::class)
         };
     }
 }
