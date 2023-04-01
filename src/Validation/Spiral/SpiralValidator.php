@@ -36,17 +36,17 @@ final class SpiralValidator implements ValidatorInterface
         }
     }
 
-    public function validateProperty(\ReflectionProperty $property, mixed $value, LivewireComponent $component): void
+    public function validateProperty(string $property, mixed $value, LivewireComponent $component): void
     {
         if (!$component instanceof ShouldBeValidated) {
             return;
         }
 
         $validator = $this->validation->validate(
-            [$property->getName() => $value],
+            [$property => $value],
             array_filter(
                 $component->validationRules(),
-                static fn (string $key): bool => $key === $property->getName(),
+                static fn (string $key): bool => $key === $property,
                 \ARRAY_FILTER_USE_KEY
             ),
             $component->getValidationContext()

@@ -17,5 +17,5 @@ interface ValidatorInterface
     /**
      * @throws ValidationException
      */
-    public function validateProperty(\ReflectionProperty $property, mixed $value, LivewireComponent $component): void;
+    public function validateProperty(string $property, mixed $value, LivewireComponent $component): void;
 }

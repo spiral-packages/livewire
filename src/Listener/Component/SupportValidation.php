@@ -30,8 +30,8 @@ final class SupportValidation
         try {
             $this->validator->validate($event->component);
             $event->component->setValidationErrors();
-            $event->shouldSkipCalling = true;
         } catch (ValidationException $exception) {
+            $event->shouldSkipCalling = true;
             $event->component->setValidationErrors($exception->getErrors());
         }
     }
@@ -44,14 +44,11 @@ final class SupportValidation
         $errors = $event->component->getValidationErrors();
 
         try {
-            $this->validator->validateProperty(
-                new \ReflectionProperty($event->component, $event->name),
-                $event->value,
-                $event->component
-            );
+            $this->validator->validateProperty($event->name, $event->value, $event->component);
             unset($errors[$event->name]);
         } catch (ValidationException $exception) {
             $errors[$event->name] = $exception->getErrors()[$event->name];
+        } finally {
             $event->component->setValidationErrors($errors);
         }
     }
