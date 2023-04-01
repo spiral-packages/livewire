@@ -6,13 +6,19 @@ namespace Spiral\Livewire\Middleware\Component;
 
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use Spiral\Livewire\Component\DataAccessorInterface;
 use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Exception\Component\PublicPropertyTypeNotAllowedException;
 use Spiral\Livewire\Request;
 use Spiral\Livewire\Response;
 
-final class HydratePublicProperties implements HydrationMiddleware, DehydrationMiddleware, InitialDehydrationMiddleware
+final class HydrateModelProperties implements HydrationMiddleware, DehydrationMiddleware, InitialDehydrationMiddleware
 {
+    public function __construct(
+        private readonly DataAccessorInterface $dataAccessor
+    ) {
+    }
+
     public function hydrate(LivewireComponent $component, Request $request): void
     {
         $publicProperties = $request->memo['data'] ?? [];
@@ -59,7 +65,7 @@ final class HydratePublicProperties implements HydrationMiddleware, DehydrationM
      */
     private function dehydrateProperties(LivewireComponent $component, Response $response): void
     {
-        $publicData = $component->getPublicPropertiesDefinedBySubClass();
+        $publicData = $this->dataAccessor->getData($component);
 
         $response->memo['data'] = [];
         $response->memo['dataMeta'] = [];

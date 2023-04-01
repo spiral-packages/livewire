@@ -6,6 +6,7 @@ namespace Spiral\Livewire\Middleware\Component;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Spiral\Core\ResolverInterface;
+use Spiral\Livewire\Component\DataAccessorInterface;
 use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Event\Component\PropertyDehydrate;
 use Spiral\Livewire\Event\Component\PropertyHydrate;
@@ -16,13 +17,14 @@ final class CallPropertyHydrationHooks implements HydrationMiddleware, Dehydrati
 {
     public function __construct(
         private readonly ResolverInterface $resolver,
-        private readonly EventDispatcherInterface $dispatcher
+        private readonly EventDispatcherInterface $dispatcher,
+        private readonly DataAccessorInterface $dataAccessor
     ) {
     }
 
     public function hydrate(LivewireComponent $component, Request $request): void
     {
-        foreach ($component->getPublicPropertiesDefinedBySubClass() as $property => $value) {
+        foreach ($this->dataAccessor->getData($component) as $property => $value) {
             $this->dispatcher->dispatch(new PropertyHydrate($property, $value, $component, $request));
 
             // Call magic hydrateProperty methods on the component.
@@ -51,7 +53,7 @@ final class CallPropertyHydrationHooks implements HydrationMiddleware, Dehydrati
 
     private function callDehydrateHooks(LivewireComponent $component, Response $response): void
     {
-        foreach ($component->getPublicPropertiesDefinedBySubClass() as $property => $value) {
+        foreach ($this->dataAccessor->getData($component) as $property => $value) {
             $studlyProperty = str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $property)));
             $method = 'dehydrate'.$studlyProperty;
 

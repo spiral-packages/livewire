@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Spiral\Livewire\Validation\Laravel;
 
+use Spiral\Livewire\Component\DataAccessorInterface;
 use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Exception\Validation\ValidationException;
 use Spiral\Livewire\Validation\ShouldBeValidated;
@@ -13,7 +14,8 @@ use Spiral\Validation\Laravel\LaravelValidation;
 final class LaravelValidator implements ValidatorInterface
 {
     public function __construct(
-        private readonly LaravelValidation $validation
+        private readonly LaravelValidation $validation,
+        private readonly DataAccessorInterface $dataAccessor
     ) {
     }
 
@@ -24,7 +26,7 @@ final class LaravelValidator implements ValidatorInterface
         }
 
         $validator = $this->validation->validate(
-            $component->getPublicPropertiesDefinedBySubClass(),
+            $this->dataAccessor->getData($component),
             $component->validationRules(),
             $component->getValidationContext()
         );

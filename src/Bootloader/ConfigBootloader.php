@@ -128,7 +128,7 @@ final class ConfigBootloader extends Bootloader
                 'hydration_middleware' => [
                     Middleware\SecureHydrationWithChecksum::class,
                     Middleware\HashDataPropertiesForDirtyDetection::class,
-                    Middleware\HydratePublicProperties::class,
+                    Middleware\HydrateModelProperties::class,
                     Middleware\CallPropertyHydrationHooks::class,
                     Middleware\CallHydrationHooks::class,
                     Middleware\PerformDataBindingUpdates::class,
@@ -138,7 +138,7 @@ final class ConfigBootloader extends Bootloader
                 'initial_dehydration_middleware' => [
                     Middleware\SecureHydrationWithChecksum::class,
                     Middleware\NormalizeServerMemoSansDataForJavaScript::class,
-                    Middleware\HydratePublicProperties::class,
+                    Middleware\HydrateModelProperties::class,
                     Middleware\CallPropertyHydrationHooks::class,
                     Middleware\CallHydrationHooks::class,
                     Middleware\RenderView::class,
@@ -148,7 +148,7 @@ final class ConfigBootloader extends Bootloader
                     Middleware\SecureHydrationWithChecksum::class,
                     Middleware\NormalizeServerMemoSansDataForJavaScript::class,
                     Middleware\HashDataPropertiesForDirtyDetection::class,
-                    Middleware\HydratePublicProperties::class,
+                    Middleware\HydrateModelProperties::class,
                     Middleware\CallPropertyHydrationHooks::class,
                     Middleware\CallHydrationHooks::class,
                     Middleware\RenderView::class,

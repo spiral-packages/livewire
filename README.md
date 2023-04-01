@@ -79,7 +79,7 @@ use Spiral\Livewire\Listener\Component\SupportChildren;
 use Spiral\Livewire\Listener\Component\SupportLocales;
 use Spiral\Livewire\Middleware\Component\CallHydrationHooks;
 use Spiral\Livewire\Middleware\Component\CallPropertyHydrationHooks;
-use Spiral\Livewire\Middleware\Component\HydratePublicProperties;
+use Spiral\Livewire\Middleware\Component\HydrateModelProperties;
 
 return [
     'listeners' => [
@@ -105,7 +105,7 @@ return [
     ],
     'hydration_middleware' => [
         // ...
-        HydratePublicProperties::class,
+        HydrateModelProperties::class,
         // ...
     ],
     'initial_dehydration_middleware' => [

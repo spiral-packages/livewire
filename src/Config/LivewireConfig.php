@@ -21,7 +21,7 @@ use Spiral\Livewire\Middleware\Component\InitialHydrationMiddleware;
  * @psalm-type TProcessor = ProcessorInterface|class-string<ProcessorInterface>|Autowire<ProcessorInterface>
  *
  * @property array{
- *     listeners: array<non-empty-string, EventListener|EventListener[]>,
+ *     listeners: array<class-string, EventListener|EventListener[]>,
  *     initial_hydration_middleware: TInitialHydrationMiddleware[],
  *     hydration_middleware: THydrationMiddleware[],
  *     initial_dehydration_middleware: TInitialDehydrationMiddleware[],
@@ -45,7 +45,7 @@ final class LivewireConfig extends InjectableConfig
     ];
 
     /**
-     * @return array<non-empty-string, EventListener|EventListener[]>
+     * @return array<class-string, EventListener|EventListener[]>
      */
     public function getListeners(): array
     {
