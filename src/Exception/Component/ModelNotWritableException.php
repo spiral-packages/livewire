@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace Spiral\Livewire\Exception\Component;
 
-final class PublicPropertyNotFoundException extends ComponentException
+final class ModelNotWritableException extends ComponentException
 {
 }

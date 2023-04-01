@@ -8,6 +8,7 @@ use Spiral\Livewire\Component\Event;
 use Spiral\Livewire\Event\Component\ActionReturned;
 use Spiral\Livewire\Exception\Component\BadMethodCallException;
 
+// TODO refactor or remove this trait
 trait ReceiveEvent
 {
     protected array $eventQueue = [];
@@ -98,6 +99,7 @@ trait ReceiveEvent
     {
         $method = $this->getEventsAndHandlers()[$event];
 
+        /** @psalm-suppress UndefinedMagicMethod */
         $this->callMethod($method, $params, function ($returned) use ($event, $id) {
             $this->livewireDispatcher->dispatch(new ActionReturned($this, $event, $returned, $id));
         });

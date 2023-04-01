@@ -10,7 +10,7 @@ final class ComponentCallingMethod
 {
     public function __construct(
         public readonly LivewireComponent $component,
-        public readonly string $method,
+        public readonly \ReflectionMethod $method,
         public readonly array $params,
         public bool $shouldSkipCalling = false
     ) {

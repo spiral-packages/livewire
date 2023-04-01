@@ -26,6 +26,7 @@ final class ListenerBootloader extends Bootloader
                 $listeners = [$listeners];
             }
             foreach ($listeners as $listener) {
+                /** @psalm-suppress ArgumentTypeCoercion */
                 $listenerRegistry->addListener(
                     $event,
                     $factory->create($listener->listener, $listener->method),

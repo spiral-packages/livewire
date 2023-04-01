@@ -9,6 +9,8 @@ use Spiral\Boot\Bootloader\Bootloader;
 use Spiral\Boot\DirectoriesInterface;
 use Spiral\Bootloader\Security\EncrypterBootloader;
 use Spiral\Core\FactoryInterface;
+use Spiral\Livewire\Component\ActionHandler;
+use Spiral\Livewire\Component\ActionHandlerInterface;
 use Spiral\Livewire\Component\ChecksumManager;
 use Spiral\Livewire\Component\ChecksumManagerInterface;
 use Spiral\Livewire\Component\DataAccessor;
@@ -49,6 +51,7 @@ final class LivewireBootloader extends Bootloader
         PropertyHasherInterface::class => PropertyHasher::class,
         RendererInterface::class => Renderer::class,
         DataAccessorInterface::class => DataAccessor::class,
+        ActionHandlerInterface::class => ActionHandler::class,
         PropertyAccessorInterface::class => [self::class, 'initPropertyAccessor'],
     ];
 

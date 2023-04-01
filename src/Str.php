@@ -71,6 +71,13 @@ final class Str
 
     /**
      * Get the portion of a string before the first occurrence of a given value.
+     *
+     * @template T of non-empty-string|string|\Stringable
+     *
+     * @param string|non-empty-string|\Stringable $subject
+     * @param string|non-empty-string|\Stringable $search
+     *
+     * @psalm-return (T is non-empty-string ? non-empty-string : string)
      */
     public static function before(string|\Stringable $subject, string|\Stringable $search): string
     {
@@ -104,7 +111,7 @@ final class Str
             $search = (string) $search;
         }
 
-        return '' === $search ? $subject : array_reverse(explode($search, $subject, 2))[0];
+        return '' === $search ? $subject : (array_reverse(explode($search, $subject, 2))[0] ?? '');
     }
 
     /**
@@ -132,10 +139,13 @@ final class Str
     /**
      * @param positive-int $length
      *
+     * @return non-empty-string
+     *
      * @throws \Exception
      */
     public static function random(int $length = 16): string
     {
+        /** @var non-empty-string $string */
         $string = '';
 
         while (($len = \strlen($string)) < $length) {

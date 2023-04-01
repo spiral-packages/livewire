@@ -6,6 +6,7 @@ namespace Spiral\Livewire\Middleware\Component;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Spiral\Filters\Exception\ValidationException;
+use Spiral\Livewire\Component\ActionHandlerInterface;
 use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Event\Component\FailedValidation;
 use Spiral\Livewire\Request;
@@ -13,6 +14,7 @@ use Spiral\Livewire\Request;
 final class PerformDataBindingUpdates implements HydrationMiddleware
 {
     public function __construct(
+        private readonly ActionHandlerInterface $actionHandler,
         private readonly EventDispatcherInterface $dispatcher
     ) {
     }
@@ -31,7 +33,9 @@ final class PerformDataBindingUpdates implements HydrationMiddleware
                     continue;
                 }
 
-                $component->syncInput($data['name'], $data['value']);
+                /** @var non-empty-string $name */
+                $name = trim($data['name']);
+                $this->actionHandler->syncInput($component, $name, $data['value']);
             }
         } catch (ValidationException $e) {
             $this->dispatcher->dispatch(new FailedValidation($component, $e));

@@ -6,7 +6,6 @@ namespace Spiral\Livewire\Component;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Spiral\Core\ResolverInterface;
-use Spiral\Livewire\Component\Trait\HandleActionTrait;
 use Spiral\Livewire\Component\Trait\ReceiveEvent;
 use Spiral\Livewire\Component\Trait\TracksRenderedChildren;
 use Spiral\Livewire\Event\Component\ComponentRendered;
@@ -30,7 +29,6 @@ use Spiral\Views\ViewsInterface;
  */
 abstract class LivewireComponent
 {
-    use HandleActionTrait;
     use ReceiveEvent;
     use TracksRenderedChildren;
 
@@ -61,6 +59,10 @@ abstract class LivewireComponent
     private PropertyHasherInterface $livewireHasher;
     private RouterInterface $livewireRouter;
     private bool $livewireShouldSkipRender = false;
+
+    /**
+     * @var ?non-empty-string
+     */
     private ?string $livewireRedirectTo = null;
 
     /**
@@ -130,7 +132,10 @@ abstract class LivewireComponent
      */
     public function redirectToRoute(string $route, array $parameters = []): void
     {
-        $this->redirectTo((string) $this->livewireRouter->uri($route, $parameters));
+        /** @var non-empty-string $uri */
+        $uri = (string) $this->livewireRouter->uri($route, $parameters);
+
+        $this->redirectTo($uri);
     }
 
     /**

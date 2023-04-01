@@ -15,7 +15,7 @@ final class Attribute
      * @param non-empty-string $dom  the source HTML
      * @param array            $data the attribute data to embed
      *
-     * @return non-empty-string the HTML with the attributes embedded in the root tag
+     * @return string the HTML with the attributes embedded in the root tag
      *
      * @throws RootTagMissingFromViewException when the component template contains more than one root tag
      * @throws \JsonException                  when escaping of data failed
@@ -57,14 +57,14 @@ final class Attribute
      *
      * @param mixed $subject the string to escape
      *
-     * @return non-empty-string the escaped string
+     * @return string the escaped string
      *
      * @throws \JsonException when encoding of json in subject string failed
      */
     protected static function escapeStringForHtml(mixed $subject): string
     {
         if (\is_string($subject) || is_numeric($subject)) {
-            return htmlspecialchars($subject);
+            return htmlspecialchars((string) $subject);
         }
 
         return htmlspecialchars(json_encode($subject, \JSON_THROW_ON_ERROR));

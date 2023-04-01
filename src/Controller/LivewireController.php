@@ -17,6 +17,9 @@ final class LivewireController
     ) {
     }
 
+    /**
+     * @param non-empty-string $component
+     */
     public function message(string $component, Livewire $livewire, InputManager $input): ResponseInterface
     {
         return $this->response->json($livewire->subsequentRequest(

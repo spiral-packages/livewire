@@ -26,6 +26,7 @@ final class Renderer implements RendererInterface
 
         $view = $component->getPreRenderedView();
 
+        /** @var non-empty-string $output */
         $output = $view->render(array_merge(
             $component->getRenderContext(),
             $this->dataAccessor->getData($component),
