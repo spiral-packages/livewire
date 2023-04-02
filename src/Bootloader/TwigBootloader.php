@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Spiral\Livewire\Bootloader;
 
 use Spiral\Boot\Bootloader\Bootloader;
-use Spiral\Livewire\Twig\Extension\LivewireExtension;
+use Spiral\Livewire\Template\Twig\Extension\LivewireExtension;
 use Spiral\Twig\Bootloader\TwigBootloader as TwigBridge;
 
 final class TwigBootloader extends Bootloader
