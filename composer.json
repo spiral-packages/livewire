@@ -12,7 +12,7 @@
         "spiral-packages/league-event": "^1.0",
         "spiral/attributes": "^3.0",
         "spiral/encrypter": "^3.6",
-        "symfony/property-access": "^5.4 || ^6.0"
+        "symfony/property-access": "^5.4.22 || ^6.0"
     },
     "require-dev": {
         "spiral/twig-bridge": "^2.0",
