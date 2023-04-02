@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Livewire\Twig\Extension;
+namespace Spiral\Livewire\Template\Twig\Extension;
 
 use Spiral\Boot\Environment\DebugMode;
 use Spiral\Core\FactoryInterface;
-use Spiral\Livewire\Twig\NodeVisitor\LivewireNodeVisitor;
+use Spiral\Livewire\Template\Twig\NodeVisitor\LivewireNodeVisitor;
 use Spiral\Views\ViewsInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -30,7 +30,7 @@ final class LivewireExtension extends AbstractExtension
     {
         return $this->factory
             ->make(ViewsInterface::class)
-            ->render('livewire:twig/styles.twig', [
+            ->render('livewire:styles', [
                 'debug' => $this->factory->make(DebugMode::class)->isEnabled(),
             ]);
     }
@@ -39,7 +39,7 @@ final class LivewireExtension extends AbstractExtension
     {
         return $this->factory
             ->make(ViewsInterface::class)
-            ->render('livewire:twig/scripts.twig', [
+            ->render('livewire:scripts', [
                 'debug' => $this->factory->make(DebugMode::class)->isEnabled(),
                 'jsonEncodedOptions' => '',
                 'appUrl' => '',

@@ -44,7 +44,8 @@ final class Livewire
     public function initialRequest(string $componentName, mixed ...$params): string
     {
         $component = $this->componentRegistry->get($componentName);
-        if (method_exists($component, 'boot')) {
+
+        if (\method_exists($component, 'boot')) {
             $component->boot(...$this->resolver->resolveArguments(new \ReflectionMethod($component, 'boot')));
         }
 
@@ -60,6 +61,7 @@ final class Livewire
                 'errors' => [],
             ],
         ]);
+
 
         $this->initialHydrate($component, $request);
 
@@ -85,7 +87,7 @@ final class Livewire
     public function subsequentRequest(string $componentName, Request $request): array
     {
         $component = $this->componentRegistry->get($componentName);
-        if (method_exists($component, 'boot')) {
+        if (\method_exists($component, 'boot')) {
             $component->boot(...$this->resolver->resolveArguments(new \ReflectionMethod($component, 'boot')));
         }
 
@@ -110,7 +112,7 @@ final class Livewire
     {
         // The array is being reversed here, so the middleware dehydrate phase order of execution is
         // the inverse of hydrate. This makes the middlewares behave like layers in a shell.
-        foreach (array_reverse($this->initialDehydrationMiddlewareRegistry->all()) as $middleware) {
+        foreach (\array_reverse($this->initialDehydrationMiddlewareRegistry->all()) as $middleware) {
             $middleware->initialDehydrate($component, $response);
         }
     }
@@ -126,7 +128,7 @@ final class Livewire
     {
         // The array is being reversed here, so the middleware dehydrate phase order of execution is
         // the inverse of hydrate. This makes the middlewares behave like layers in a shell.
-        foreach (array_reverse($this->dehydrationMiddlewareRegistry->all()) as $middleware) {
+        foreach (\array_reverse($this->dehydrationMiddlewareRegistry->all()) as $middleware) {
             $middleware->dehydrate($component, $response);
         }
     }
