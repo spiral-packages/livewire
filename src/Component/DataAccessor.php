@@ -44,6 +44,28 @@ final class DataAccessor implements DataAccessorInterface
      */
     public function setValue(LivewireComponent $component, string $propertyPath, mixed $value): void
     {
+        $model = $component;
+        /** @var array<non-empty-string> $pathParts */
+        $pathParts = explode('.', $propertyPath);
+
+        $nextValueArrayKey = false;
+        foreach ($pathParts as $key => $part) {
+            if ($nextValueArrayKey) {
+                $pathParts[$key] = '['.$part.']';
+            }
+            $nextValueArrayKey = false;
+            $model = $this->getModelValue($model, $part);
+            if (\is_array($model)) {
+                $nextValueArrayKey = true;
+            }
+        }
+
+        $propertyPath = '';
+        foreach ($pathParts as $part) {
+            $propertyPath .= str_starts_with($part, '[') || '' === $propertyPath ? $part : '.'.$part;
+        }
+
+        // Set the value of the target property.
         if (!$this->propertyAccessor->isWritable($component, $propertyPath)) {
             throw new ModelNotWritableException(sprintf(
                 'Unable to set component data. Model `%s` not found on component: `%s`.',
@@ -60,11 +82,13 @@ final class DataAccessor implements DataAccessorInterface
      */
     public function getValue(LivewireComponent $component, string $propertyPath, mixed $default = null): mixed
     {
-        if (!$this->propertyAccessor->isReadable($component, $propertyPath)) {
-            return $default;
+        $model = $component;
+        /** @var non-empty-string $part */
+        foreach (explode('.', $propertyPath) as $part) {
+            $model = $this->getModelValue($model, $part);
         }
 
-        return $this->propertyAccessor->getValue($component, $propertyPath);
+        return $model;
     }
 
     /**
@@ -113,5 +137,21 @@ final class DataAccessor implements DataAccessorInterface
         }
 
         return $data;
+    }
+
+    /**
+     * @param non-empty-string $propertyPath
+     */
+    public function getModelValue(object|array $model, string $propertyPath, mixed $default = null): mixed
+    {
+        if (\is_array($model)) {
+            $propertyPath = '['.$propertyPath.']';
+        }
+
+        if (!$this->propertyAccessor->isReadable($model, $propertyPath)) {
+            return $default;
+        }
+
+        return $this->propertyAccessor->getValue($model, $propertyPath);
     }
 }

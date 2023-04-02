@@ -7,9 +7,9 @@ namespace Spiral\Livewire\Tests\App\DataTransferObject;
 final class Address
 {
     public function __construct(
-        public readonly string $street,
-        public readonly string $city,
-        public readonly string $state
+        public string $street,
+        public string $city,
+        public string $state
     ) {
     }
 }
