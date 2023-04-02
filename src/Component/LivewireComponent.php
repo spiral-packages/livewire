@@ -68,7 +68,7 @@ abstract class LivewireComponent
     /**
      * @return non-empty-string
      */
-    public function getName(): string
+    public function getComponentName(): string
     {
         return $this->livewireName;
     }
@@ -76,7 +76,7 @@ abstract class LivewireComponent
     /**
      * @return non-empty-string
      */
-    public function getId(): string
+    public function getComponentId(): string
     {
         return $this->livewireId;
     }
@@ -107,16 +107,6 @@ abstract class LivewireComponent
         $this->livewireErrors = $errors;
     }
 
-    public function getValidationErrors(): array
-    {
-        return $this->livewireErrors;
-    }
-
-    public function getForStack(): array
-    {
-        return $this->forStack;
-    }
-
     /**
      * @param non-empty-string $url
      */
@@ -139,34 +129,6 @@ abstract class LivewireComponent
     }
 
     /**
-     * @return ?non-empty-string
-     */
-    public function getRedirectTo(): ?string
-    {
-        return $this->livewireRedirectTo;
-    }
-
-    public function getValidationContext(): array
-    {
-        return $this->validationContext;
-    }
-
-    public function getPreRenderedView(): ViewInterface
-    {
-        return $this->preRenderedView;
-    }
-
-    public function getRenderContext(): array
-    {
-        return $this->renderContext;
-    }
-
-    public function shouldSkipRender(): bool
-    {
-        return $this->livewireShouldSkipRender;
-    }
-
-    /**
      * @throws BadMethodCallException
      */
     public function __call(string $method, mixed $params): void
@@ -183,6 +145,36 @@ abstract class LivewireComponent
         }
 
         throw new BadMethodCallException(sprintf('Method %s::%s does not exist!', static::class, $method));
+    }
+
+    /**
+     * @internal
+     *
+     * @return array{
+     *     id: non-empty-string,
+     *     name: non-empty-string,
+     *     renderContext: array,
+     *     validationContext: array,
+     *     forStack: array,
+     *     errors: array,
+     *     shouldSkipRender: bool,
+     *     redirectTo: ?non-empty-string,
+     *     preRenderedView: ViewInterface
+     * }
+     */
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->livewireId,
+            'name' => $this->livewireName,
+            'renderContext' => $this->renderContext,
+            'validationContext' => $this->validationContext,
+            'forStack' => $this->forStack,
+            'errors' => $this->livewireErrors,
+            'shouldSkipRender' => $this->livewireShouldSkipRender,
+            'redirectTo' => $this->livewireRedirectTo,
+            'preRenderedView' => $this->preRenderedView,
+        ];
     }
 
     /**

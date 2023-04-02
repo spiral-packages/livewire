@@ -82,13 +82,13 @@ final class ActionHandler implements ActionHandlerInterface
             throw new ModelNotFoundException(sprintf(
                 'Unable to set component data. Model `%s` not found on component: `%s`.',
                 $property,
-                $component->getName()
+                $component->getComponentName()
             ));
         }
 
         $this->dataAccessor->setValue($component, $name, $value);
 
-        $rehash && $this->hasher->hash($component->getId(), $name, $value);
+        $rehash && $this->hasher->hash($component->getComponentId(), $name, $value);
 
         $component->updated($name, $value);
 
@@ -140,7 +140,7 @@ final class ActionHandler implements ActionHandlerInterface
         throw new BadMethodCallException(sprintf(
             'Unable to call component method. Public method `%s` not found on component: `%s`.',
             $method,
-            $component->getName()
+            $component->getComponentName()
         ));
     }
 }

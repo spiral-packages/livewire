@@ -50,7 +50,7 @@ final class PerformActionCalls implements HydrationMiddleware
                     throw new DirectlyCallingLifecycleHooksNotAllowedException(sprintf(
                         'Unable to call lifecycle method `%s` directly on component: `%s`.',
                         $method,
-                        $component->getName()
+                        $component->getComponentName()
                     ));
                 }
 

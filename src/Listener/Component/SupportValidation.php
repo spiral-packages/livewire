@@ -19,7 +19,7 @@ final class SupportValidation
 
     public function onComponentDehydrate(ComponentDehydrate $event): void
     {
-        $event->response->memo['errors'] = $event->component->getValidationErrors();
+        $event->response->memo['errors'] = $event->component->toArray()['errors'];
     }
 
     /**
@@ -41,7 +41,7 @@ final class SupportValidation
      */
     public function onComponentUpdating(ComponentUpdating $event): void
     {
-        $errors = $event->component->getValidationErrors();
+        $errors = $event->component->toArray()['errors'];
 
         try {
             $this->validator->validateProperty($event->name, $event->value, $event->component);

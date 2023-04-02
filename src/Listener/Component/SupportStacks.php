@@ -14,21 +14,21 @@ final class SupportStacks
 
     public function onComponentDehydrate(ComponentDehydrate $event): void
     {
-        $this->forStack[$event->component->getName()] = array_merge(
-            $this->forStack[$event->component->getName()] ?? [],
-            $event->component->getForStack()
+        $this->forStack[$event->component->getComponentName()] = array_merge(
+            $this->forStack[$event->component->getComponentName()] ?? [],
+            $event->component->toArray()['forStack']
         );
     }
 
     public function onComponentDehydrateSubsequent(ComponentDehydrateSubsequent $event): void
     {
-        if (\count($this->forStack[$event->component->getName()] ?? [])) {
-            $event->response->effects['forStack'] = $this->forStack[$event->component->getName()];
+        if (\count($this->forStack[$event->component->getComponentName()] ?? [])) {
+            $event->response->effects['forStack'] = $this->forStack[$event->component->getComponentName()];
         }
     }
 
     public function onFlushState(FlushState $event): void
     {
-        $this->forStack[$event->component->getName()] = [];
+        $this->forStack[$event->component->getComponentName()] = [];
     }
 }

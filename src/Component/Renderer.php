@@ -20,17 +20,19 @@ final class Renderer implements RendererInterface
      */
     public function render(LivewireComponent $component): ?string
     {
-        if ($component->shouldSkipRender()) {
+        $data = $component->toArray();
+
+        if ($data['shouldSkipRender']) {
             return null;
         }
 
-        $view = $component->getPreRenderedView();
+        $view = $data['preRenderedView'];
 
         /** @var non-empty-string $output */
         $output = $view->render(array_merge(
-            $component->getRenderContext(),
+            $data['renderContext'],
             $this->dataAccessor->getData($component),
-            ['errors' => $component->getValidationErrors()]
+            ['errors' => $data['errors']]
         ));
 
         $this->dispatcher->dispatch(new ViewRender(view: $view, output: $output));

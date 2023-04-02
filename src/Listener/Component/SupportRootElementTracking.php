@@ -16,7 +16,7 @@ final class SupportRootElementTracking
 
         $event->response->effects['html'] = $this->addComponentEndingMarker(
             $event->response->effects['html'],
-            $event->component->getId()
+            $event->component->getComponentId()
         );
     }
 

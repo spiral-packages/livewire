@@ -28,7 +28,7 @@ final class SpiralValidator implements ValidatorInterface
         $validator = $this->validation->validate(
             $this->dataAccessor->getData($component),
             $component->validationRules(),
-            $component->getValidationContext()
+            $component->toArray()['validationContext']
         );
 
         if (!$validator->isValid()) {
@@ -49,7 +49,7 @@ final class SpiralValidator implements ValidatorInterface
                 static fn (string $key): bool => $key === $property,
                 \ARRAY_FILTER_USE_KEY
             ),
-            $component->getValidationContext()
+            $component->toArray()['validationContext']
         );
 
         if (!$validator->isValid()) {

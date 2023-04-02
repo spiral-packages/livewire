@@ -16,8 +16,8 @@ final class ComponentRegistry implements ComponentRegistryInterface
 
     public function add(LivewireComponent $component): void
     {
-        if (!$this->hasComponent($component->getName())) {
-            $this->components[$component->getName()] = $component;
+        if (!$this->hasComponent($component->getComponentName())) {
+            $this->components[$component->getComponentName()] = $component;
         }
     }
 

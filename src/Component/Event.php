@@ -8,8 +8,8 @@ final class Event
 {
     private string $name;
     private mixed $params;
-    private bool $up;
-    private bool $self;
+    private bool $up = false;
+    private bool $self = false;
     private ?string $component = null;
 
     public function __construct(string $name, mixed $params)

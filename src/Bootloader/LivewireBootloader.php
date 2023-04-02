@@ -96,7 +96,7 @@ final class LivewireBootloader extends Bootloader
     private function initPropertyAccessor(): PropertyAccessorInterface
     {
         return PropertyAccess::createPropertyAccessorBuilder()
-            ->enableMagicMethods()
+            ->disableMagicMethods()
             ->getPropertyAccessor();
     }
 }

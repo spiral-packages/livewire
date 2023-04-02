@@ -10,6 +10,6 @@ final class SupportRedirects
 {
     public function onComponentDehydrate(ComponentDehydrate $event): void
     {
-        $event->response->effects['redirect'] = $event->component->getRedirectTo();
+        $event->response->effects['redirect'] = $event->component->toArray()['redirectTo'];
     }
 }

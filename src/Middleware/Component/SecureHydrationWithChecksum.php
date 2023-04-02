@@ -32,7 +32,7 @@ final class SecureHydrationWithChecksum implements HydrationMiddleware, Dehydrat
         if (!$this->checksumManager->check($checksum, $request->fingerprint, $request->memo)) {
             throw new CorruptComponentPayloadException(sprintf(
                 'Livewire encountered corrupt data when trying to hydrate the %s component.',
-                $component->getName()
+                $component->getComponentName()
             ));
         }
     }

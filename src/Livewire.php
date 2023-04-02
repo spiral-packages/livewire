@@ -50,8 +50,8 @@ final class Livewire
 
         $request = new Request([
             'fingerprint' => [
-                'id' => $component->getId(),
-                'name' => $component->getName(),
+                'id' => $component->getComponentId(),
+                'name' => $component->getComponentName(),
                 'path' => $this->input->path(),
                 'method' => $this->input->method(),
             ],

@@ -87,7 +87,7 @@ final class HydrateModelProperties implements HydrationMiddleware, DehydrationMi
                 $response->memo['data'][$key] = $value->format(\DateTimeInterface::ISO8601);
             } else {
                 throw new PublicPropertyTypeNotAllowedException(
-                    "Livewire component's `{$component->getName()}` public property `{$key}` must be of type: `numeric`, `string`, `array`, `null`, or `boolean`.\n".
+                    "Livewire component's `{$component->getComponentName()}` public property `{$key}` must be of type: `numeric`, `string`, `array`, `null`, or `boolean`.\n".
                     "Only protected or private properties can be set as other types because JavaScript doesn't need to access them."
                 );
             }

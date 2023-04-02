@@ -21,12 +21,16 @@ final class DataAccessor implements DataAccessorInterface
     {
         $data = [];
         foreach ((new \ReflectionClass($component))->getProperties() as $property) {
-            $model = $this->reader->firstPropertyMetadata($property, Model::class);
-
-            if (null !== $model) {
-                $data[$property->getName()] = $this->propertyAccessor->isReadable($component, $property->getName())
+            if (null !== $this->reader->firstPropertyMetadata($property, Model::class)) {
+                $value = $this->propertyAccessor->isReadable($component, $property->getName())
                     ? $this->propertyAccessor->getValue($component, $property->getName())
                     : null;
+
+                $data[$property->getName()] = match (true) {
+                    \is_array($value) => $this->getArrayData($value),
+                    \is_object($value) => $this->getObjectData($value),
+                    default => $value
+                };
             }
         }
 
@@ -44,7 +48,7 @@ final class DataAccessor implements DataAccessorInterface
             throw new ModelNotWritableException(sprintf(
                 'Unable to set component data. Model `%s` not found on component: `%s`.',
                 $propertyPath,
-                $component->getName()
+                $component->getComponentName()
             ));
         }
 
@@ -71,13 +75,43 @@ final class DataAccessor implements DataAccessorInterface
         foreach ((new \ReflectionClass($component))->getProperties() as $reflection) {
             $model = $this->reader->firstPropertyMetadata($reflection, Model::class);
 
-            if (null !== $model) {
-                if ($property === $reflection->getName()) {
-                    return true;
-                }
+            if ((null !== $model) && $property === $reflection->getName()) {
+                return true;
             }
         }
 
         return false;
+    }
+
+    private function getObjectData(object $object): array
+    {
+        $data = [];
+        foreach ((new \ReflectionClass($object))->getProperties() as $property) {
+            $value = $this->propertyAccessor->isReadable($object, $property->getName())
+                ? $this->propertyAccessor->getValue($object, $property->getName())
+                : null;
+
+            $data[$property->getName()] = match (true) {
+                \is_array($value) => $this->getArrayData($value),
+                \is_object($value) => $this->getObjectData($value),
+                default => $value
+            };
+        }
+
+        return $data;
+    }
+
+    private function getArrayData(array $array): array
+    {
+        $data = [];
+        foreach ($array as $key => $arrayValue) {
+            $data[$key] = match (true) {
+                \is_array($arrayValue) => $this->getArrayData($arrayValue),
+                \is_object($arrayValue) => $this->getObjectData($arrayValue),
+                default => $arrayValue
+            };
+        }
+
+        return $data;
     }
 }

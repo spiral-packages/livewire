@@ -21,7 +21,7 @@ final class HashDataPropertiesForDirtyDetection implements HydrationMiddleware, 
         $data = $request->memo['data'] ?? [];
 
         foreach ($data as $key => $value) {
-            $this->hasher->hash($component->getId(), $key, $value);
+            $this->hasher->hash($component->getComponentId(), $key, $value);
         }
     }
 
@@ -30,7 +30,7 @@ final class HashDataPropertiesForDirtyDetection implements HydrationMiddleware, 
         $data = $response->memo['data'] ?? [];
 
         $dirtyProps = [];
-        foreach ($this->hasher->getHashes($component->getId()) as $key => $hash) {
+        foreach ($this->hasher->getHashes($component->getComponentId()) as $key => $hash) {
             if (!$this->hasher->isEquals($hash, $data[$key] ?? null)) {
                 $dirtyProps[] = $key;
             }
