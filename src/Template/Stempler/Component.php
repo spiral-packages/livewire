@@ -12,8 +12,8 @@ use Spiral\Stempler\Parser\Context;
 
 final class Component implements NodeInterface, AttributedInterface
 {
-    use ContextTrait;
     use AttributeTrait;
+    use ContextTrait;
 
     /** @var list<TNode> */
     public array $nodes = [];

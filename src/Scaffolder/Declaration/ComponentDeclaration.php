@@ -18,8 +18,8 @@ final class ComponentDeclaration extends AbstractDeclaration
         private readonly string $alias,
         ScaffolderConfig $config,
         string $name,
-        ?string $comment = null,
-        ?string $namespace = null,
+        string $comment = null,
+        string $namespace = null,
     ) {
         parent::__construct($config, $name, $comment, $namespace);
     }
@@ -36,7 +36,7 @@ final class ComponentDeclaration extends AbstractDeclaration
         $this->class->setFinal();
         $this->class->addAttribute(Component::class, [
             'name' => $this->alias,
-            'template' => 'components/' . $this->alias,
+            'template' => 'components/'.$this->alias,
         ]);
     }
 }

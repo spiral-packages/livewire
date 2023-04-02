@@ -62,7 +62,6 @@ final class Livewire
             ],
         ]);
 
-
         $this->initialHydrate($component, $request);
 
         $component->mount(...$params);
