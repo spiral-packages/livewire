@@ -13,10 +13,10 @@ final class NodeVisitor implements VisitorInterface
     public function enterNode(mixed $node, VisitorContext $ctx): mixed
     {
         if ($node instanceof Tag) {
-            if (\str_starts_with($node->name, 'livewire:')) {
+            if (\is_string($node->name) && \str_starts_with($node->name, 'livewire:')) {
                 $c = new Component(\substr($node->name, 9), $node->getContext());
                 foreach ($node->attrs as $attribute) {
-                    if (\is_string($attribute->value)) {
+                    if (\is_string($attribute->name) && \is_string($attribute->value)) {
                         $c->setAttribute($attribute->name, $attribute->value);
                     }
                 }

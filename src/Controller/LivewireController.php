@@ -10,6 +10,9 @@ use Spiral\Http\ResponseWrapper;
 use Spiral\Livewire\Livewire;
 use Spiral\Livewire\Request;
 
+/**
+ * @psalm-import-type TComponentName from \Spiral\Livewire\Component\LivewireComponent
+ */
 final class LivewireController
 {
     public function __construct(
@@ -18,7 +21,7 @@ final class LivewireController
     }
 
     /**
-     * @param non-empty-string $component
+     * @param TComponentName $component
      */
     public function message(string $component, Livewire $livewire, InputManager $input): ResponseInterface
     {

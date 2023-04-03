@@ -14,6 +14,11 @@
         </ignoreFiles>
     </projectFiles>
     <issueHandlers>
+        <PropertyNotSetInConstructor>
+            <errorLevel type="suppress">
+                <file name="src/Scaffolder/Command/ComponentCommand.php" />
+            </errorLevel>
+        </PropertyNotSetInConstructor>
         <UndefinedAttributeClass>
             <errorLevel type="suppress">
                 <referencedClass name="JetBrains\PhpStorm\ExpectedValues" />

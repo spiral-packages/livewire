@@ -18,6 +18,9 @@ use Spiral\Livewire\Middleware\Component\Registry\HydrationMiddlewareRegistryInt
 use Spiral\Livewire\Middleware\Component\Registry\InitialDehydrationMiddlewareRegistryInterface;
 use Spiral\Livewire\Middleware\Component\Registry\InitialHydrationMiddlewareRegistryInterface;
 
+/**
+ * @psalm-import-type TComponentName from \Spiral\Livewire\Component\LivewireComponent
+ */
 final class Livewire
 {
     public function __construct(
@@ -33,7 +36,7 @@ final class Livewire
     }
 
     /**
-     * @psalm-param non-empty-string $componentName
+     * @psalm-param TComponentName $componentName
      *
      * @throws \JsonException
      * @throws \ReflectionException
@@ -75,7 +78,7 @@ final class Livewire
     }
 
     /**
-     * @param non-empty-string $componentName
+     * @param TComponentName $componentName
      *
      * @throws ComponentNotFoundException
      * @throws RenderException
