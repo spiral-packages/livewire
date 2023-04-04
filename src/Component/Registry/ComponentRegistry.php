@@ -7,10 +7,13 @@ namespace Spiral\Livewire\Component\Registry;
 use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Exception\Component\ComponentNotFoundException;
 
+/**
+ * @psalm-import-type TComponentName from \Spiral\Livewire\Component\LivewireComponent
+ */
 final class ComponentRegistry implements ComponentRegistryInterface
 {
     /**
-     * @var array<non-empty-string, LivewireComponent>
+     * @var array<TComponentName, LivewireComponent>
      */
     private array $components = [];
 
@@ -22,7 +25,7 @@ final class ComponentRegistry implements ComponentRegistryInterface
     }
 
     /**
-     * @param non-empty-string $componentName
+     * @param TComponentName $componentName
      *
      * @throws ComponentNotFoundException
      */
@@ -36,7 +39,7 @@ final class ComponentRegistry implements ComponentRegistryInterface
     }
 
     /**
-     * @param non-empty-string $componentName
+     * @param TComponentName $componentName
      */
     public function hasComponent(string $componentName): bool
     {

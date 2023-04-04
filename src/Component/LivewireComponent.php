@@ -20,6 +20,8 @@ use Spiral\Views\ViewInterface;
 use Spiral\Views\ViewsInterface;
 
 /**
+ * @psalm-type TComponentName = non-empty-string
+ *
  * @method void boot(...$params)
  * @method void mount(...$params)
  * @method void hydrate(Request $request)
@@ -39,7 +41,7 @@ abstract class LivewireComponent
     protected array $forStack = [];
 
     /**
-     * @var non-empty-string
+     * @var TComponentName
      */
     private string $livewireName;
 
@@ -66,7 +68,7 @@ abstract class LivewireComponent
     private ?string $livewireRedirectTo = null;
 
     /**
-     * @return non-empty-string
+     * @return TComponentName
      */
     public function getComponentName(): string
     {
@@ -152,7 +154,7 @@ abstract class LivewireComponent
      *
      * @return array{
      *     id: non-empty-string,
-     *     name: non-empty-string,
+     *     name: TComponentName,
      *     renderContext: array,
      *     validationContext: array,
      *     forStack: array,
@@ -180,7 +182,7 @@ abstract class LivewireComponent
     /**
      * @internal
      *
-     * @param non-empty-string $name
+     * @param TComponentName $name
      * @param non-empty-string $template
      */
     private function configure(

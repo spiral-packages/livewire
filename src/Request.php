@@ -4,25 +4,31 @@ declare(strict_types=1);
 
 namespace Spiral\Livewire;
 
+/**
+ * @psalm-type TFingerprint = array{
+ *     id: non-empty-string,
+ *     name: non-empty-string,
+ *     locale?: string,
+ *     path: string,
+ *    method: string
+ * }
+ * @psalm-type TUpdates = array<array-key, mixed>
+ * @psalm-type TMemo = array{
+ *     errors: array<array-key, mixed>
+ * }
+ */
 final class Request
 {
+    /** @var TFingerprint */
     public array $fingerprint;
     public array $updates;
     public array $memo;
 
     /**
      * @param array{
-     *     fingerprint: array{
-     *         id: non-empty-string,
-     *         name: non-empty-string,
-     *         locale?: string,
-     *         path: string,
-     *         method: string
-     *     },
-     *     updates: array<array-key, mixed>,
-     *     serverMemo: array{
-     *         errors: array<array-key, mixed>
-     *    }
+     *     fingerprint: TFingerprint,
+     *     updates: TUpdates,
+     *     serverMemo: TMemo
      * } $payload
      */
     public function __construct(array $payload)

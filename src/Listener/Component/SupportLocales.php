@@ -28,8 +28,8 @@ final class SupportLocales
 
     public function onComponentHydrateSubsequent(ComponentHydrateSubsequent $event): void
     {
-        if ($locale = $event->request->fingerprint['locale']) {
-            if (method_exists($this->translator, 'setLocale')) {
+        if ($locale = ($event->request->fingerprint['locale'] ?? null)) {
+            if (\method_exists($this->translator, 'setLocale')) {
                 $this->translator->setLocale($locale);
             }
         }

@@ -19,8 +19,10 @@ final class ComponentRenderer implements RendererInterface
 
     public function render(Compiler $compiler, Result $result, NodeInterface $node): bool
     {
+
         switch (true) {
             case $node instanceof Component:
+                \assert(\is_string($node->name));
                 $componentArgs = '';
 
                 foreach ($node->getAttributes() as $name => $value) {

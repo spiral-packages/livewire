@@ -7,8 +7,14 @@ namespace Spiral\Livewire;
 use Spiral\Livewire\Exception\RootTagMissingFromViewException;
 use Spiral\Livewire\Service\Attribute;
 
+/**
+ * @psalm-import-type TFingerprint from \Spiral\Livewire\Request
+ */
 final class Response
 {
+    /**
+     * @param TFingerprint $fingerprint
+     */
     public function __construct(
         public array $fingerprint = [],
         public array $memo = [],
@@ -66,7 +72,7 @@ final class Response
     {
         return [
             'fingerprint' => $this->fingerprint,
-            'effects' => array_diff_key($this->effects, ['html' => null]),
+            'effects' => \array_diff_key($this->effects, ['html' => null]),
             'serverMemo' => $this->memo,
         ];
     }

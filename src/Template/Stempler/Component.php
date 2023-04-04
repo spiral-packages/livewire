@@ -10,6 +10,10 @@ use Spiral\Stempler\Node\Traits\AttributeTrait;
 use Spiral\Stempler\Node\Traits\ContextTrait;
 use Spiral\Stempler\Parser\Context;
 
+/**
+ * @implements NodeInterface<Component>
+ * @template TNode of NodeInterface
+ */
 final class Component implements NodeInterface, AttributedInterface
 {
     use AttributeTrait;
