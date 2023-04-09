@@ -16,7 +16,7 @@
         "symfony/property-access": "^5.4.22 || ^6.0"
     },
     "require-dev": {
-        "spiral/twig-bridge": "^2.0",
+        "spiral/twig-bridge": "^2.0.1",
         "nesbot/carbon": "^2.66",
         "roave/security-advisories": "dev-latest",
         "phpunit/phpunit": "^9.5.27",
