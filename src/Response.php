@@ -8,7 +8,7 @@ use Spiral\Livewire\Exception\RootTagMissingFromViewException;
 use Spiral\Livewire\Service\Attribute;
 
 /**
- * @psalm-import-type TFingerprint from \Spiral\Livewire\Request
+ * @psalm-import-type TFingerprint from Request
  */
 final class Response
 {
@@ -16,7 +16,7 @@ final class Response
      * @param TFingerprint $fingerprint
      */
     public function __construct(
-        public array $fingerprint = [],
+        public array $fingerprint,
         public array $memo = [],
         public array $effects = []
     ) {

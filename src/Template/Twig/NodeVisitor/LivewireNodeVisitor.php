@@ -33,7 +33,7 @@ final class LivewireNodeVisitor implements NodeVisitorInterface
 
         // the 'data' attribute of the text node contains the template text.
         if ($text = $node->getAttribute('data')) {
-            // if the text does not contain the directive start `<wire:`, just return
+            // if the text does not contain the directive start `<livewire:`, just return
             if (!\str_contains($text, '<'.self::DIRECTIVE.':')) {
                 return $node;
             }
@@ -49,16 +49,20 @@ final class LivewireNodeVisitor implements NodeVisitorInterface
                     }
 
                     $componentName = $match['name'];
-                    $componentArgs = \explode(' ', $match['args']);
-                    $componentArgs = \array_filter($componentArgs, static fn (string $input): bool => (bool) $input);
-                    $componentArgs = \array_map(
-                        static fn (string $argPair): mixed => \explode('=', $argPair)[1],
-                        $componentArgs
+                    $args = \array_filter(
+                        \explode(' ', $match['args']),
+                        static fn (string $input): bool => (bool) $input
                     );
-                    $componentArgs = \array_map(\trim(...), $componentArgs);
+                    $componentArgs = [];
+                    foreach ($args as $arg) {
+                        $arg = \trim($arg, '"');
+                        /** @var array{0: non-empty-string, 1: non-empty-string} $pair */
+                        $pair = \explode('=', $arg);
+                        $componentArgs[$pair[0]] = \trim($pair[1], '"');
+                    }
 
                     // initial component render by the LifecycleManager as usual
-                    return $this->livewire->initialRequest($componentName, ...$componentArgs);
+                    return $this->livewire->initialRequest($componentName, $componentArgs);
                 },
                 $text
             );

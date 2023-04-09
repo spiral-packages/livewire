@@ -22,8 +22,8 @@ use Spiral\Views\ViewsInterface;
 /**
  * @psalm-type TComponentName = non-empty-string
  *
- * @method void boot(...$params)
- * @method void mount(...$params)
+ * @method void boot()
+ * @method void mount()
  * @method void hydrate(Request $request)
  * @method void dehydrate(Response $response)
  * @method void updating(string $name, mixed $value)

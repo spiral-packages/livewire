@@ -14,7 +14,9 @@ final class NodeVisitor implements VisitorInterface
     {
         if ($node instanceof Tag) {
             if (\is_string($node->name) && \str_starts_with($node->name, 'livewire:')) {
-                $c = new Component(\substr($node->name, 9), $node->getContext());
+                /** @var non-empty-string $name */
+                $name = \substr($node->name, 9);
+                $c = new Component($name, $node->getContext());
                 foreach ($node->attrs as $attribute) {
                     if (\is_string($attribute->name) && \is_string($attribute->value)) {
                         $c->setAttribute($attribute->name, $attribute->value);

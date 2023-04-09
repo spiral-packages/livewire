@@ -19,20 +19,14 @@ final class ComponentRenderer implements RendererInterface
 
     public function render(Compiler $compiler, Result $result, NodeInterface $node): bool
     {
-
         switch (true) {
             case $node instanceof Component:
                 \assert(\is_string($node->name));
-                $componentArgs = '';
-
+                $componentArgs = [];
                 foreach ($node->getAttributes() as $name => $value) {
-                    $componentArgs .= \sprintf(', %s: %s', $name, $value);
+                    $componentArgs[$name] = \trim($value, '"');
                 }
-
-                $result->push(\sprintf(<<<'PHP'
-<?php echo $this->container->get(\Spiral\Livewire\Livewire::class)->initialRequest('%s'%s); ?>
-PHP
-                , $node->name, $componentArgs), $node->getContext());
+                $result->push($this->livewire->initialRequest($node->name, $componentArgs), $node->getContext());
         }
 
         return true;

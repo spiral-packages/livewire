@@ -13,6 +13,7 @@ use Spiral\Stempler\Parser\Context;
 /**
  * @implements NodeInterface<Component>
  * @template TNode of NodeInterface
+ * @psalm-suppress MissingTemplateParam
  */
 final class Component implements NodeInterface, AttributedInterface
 {
@@ -22,6 +23,9 @@ final class Component implements NodeInterface, AttributedInterface
     /** @var list<TNode> */
     public array $nodes = [];
 
+    /**
+     * @param non-empty-string|null $name
+     */
     public function __construct(
         public ?string $name,
         Context $context = null,

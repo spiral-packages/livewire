@@ -12,11 +12,13 @@ use Spiral\Livewire\Component\Registry\ComponentRegistryInterface;
 use Spiral\Livewire\Event\Component\FlushState;
 use Spiral\Livewire\Exception\Component\ComponentNotFoundException;
 use Spiral\Livewire\Exception\Component\RenderException;
+use Spiral\Livewire\Exception\InvalidTypeException;
 use Spiral\Livewire\Exception\RootTagMissingFromViewException;
 use Spiral\Livewire\Middleware\Component\Registry\DehydrationMiddlewareRegistryInterface;
 use Spiral\Livewire\Middleware\Component\Registry\HydrationMiddlewareRegistryInterface;
 use Spiral\Livewire\Middleware\Component\Registry\InitialDehydrationMiddlewareRegistryInterface;
 use Spiral\Livewire\Middleware\Component\Registry\InitialHydrationMiddlewareRegistryInterface;
+use Spiral\Livewire\Service\ArgumentTypecast;
 
 /**
  * @psalm-import-type TComponentName from \Spiral\Livewire\Component\LivewireComponent
@@ -31,6 +33,7 @@ final class Livewire
         private readonly DehydrationMiddlewareRegistryInterface $dehydrationMiddlewareRegistry,
         private readonly EventDispatcherInterface $dispatcher,
         private readonly ResolverInterface $resolver,
+        private readonly ArgumentTypecast $typecast,
         private readonly InputManager $input
     ) {
     }
@@ -43,8 +46,9 @@ final class Livewire
      * @throws RenderException
      * @throws ComponentNotFoundException
      * @throws RootTagMissingFromViewException
+     * @throws InvalidTypeException
      */
-    public function initialRequest(string $componentName, mixed ...$params): string
+    public function initialRequest(string $componentName, array $params): string
     {
         $component = $this->componentRegistry->get($componentName);
 
@@ -67,7 +71,10 @@ final class Livewire
 
         $this->initialHydrate($component, $request);
 
-        $component->mount(...$params);
+        $component->mount(...$this->resolver->resolveArguments(
+            new \ReflectionMethod($component, 'mount'),
+            $this->typecast->cast($params, new \ReflectionMethod($component, 'mount'))
+        ));
         $component->renderToView();
         $response = new Response($request->fingerprint, $request->memo);
         $this->initialDehydrate($component, $response);

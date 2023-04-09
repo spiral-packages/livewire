@@ -24,6 +24,8 @@
         "spiral/testing": "^2.2",
         "vimeo/psalm": "^5.9",
         "spiral/validator": "^1.3",
+        "spiral/translator": "^3.6",
+        "spiral/nyholm-bridge": "^1.3",
         "spiral-packages/symfony-validator": "^1.3",
         "spiral-packages/laravel-validator": "^1.1"
     },
@@ -50,6 +52,7 @@
         }
     },
     "suggest": {
+        "spiral/translator": "To support components localization",
         "spiral/validator": "One of available validators to validate data in a Livewire component",
         "spiral-packages/symfony-validator": "One of available validators to validate data in a Livewire component",
         "spiral-packages/laravel-validator": "One of available validators to validate data in a Livewire component"

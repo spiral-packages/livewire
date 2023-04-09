@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Spiral\Livewire\Listener\Component;
 
+use Psr\Container\ContainerInterface;
 use Spiral\Livewire\Event\Component\ComponentCallingMethod;
 use Spiral\Livewire\Event\Component\ComponentDehydrate;
 use Spiral\Livewire\Event\Component\ComponentUpdating;
@@ -13,7 +14,7 @@ use Spiral\Livewire\Validation\ValidatorInterface;
 final class SupportValidation
 {
     public function __construct(
-        private readonly ValidatorInterface $validator
+        private readonly ContainerInterface $container
     ) {
     }
 
@@ -27,8 +28,12 @@ final class SupportValidation
      */
     public function onComponentCallingMethod(ComponentCallingMethod $event): void
     {
+        if (!$validator = $this->getValidator()) {
+            return;
+        }
+
         try {
-            $this->validator->validate($event->component);
+            $validator->validate($event->component);
             $event->component->setValidationErrors();
         } catch (ValidationException $exception) {
             $event->shouldSkipCalling = true;
@@ -41,15 +46,28 @@ final class SupportValidation
      */
     public function onComponentUpdating(ComponentUpdating $event): void
     {
+        if (!$validator = $this->getValidator()) {
+            return;
+        }
+
         $errors = $event->component->toArray()['errors'];
 
         try {
-            $this->validator->validateProperty($event->name, $event->value, $event->component);
+            $validator->validateProperty($event->name, $event->value, $event->component);
             unset($errors[$event->name]);
         } catch (ValidationException $exception) {
             $errors[$event->name] = $exception->getErrors()[$event->name];
         } finally {
             $event->component->setValidationErrors($errors);
         }
+    }
+
+    private function getValidator(): ?ValidatorInterface
+    {
+        if (!$this->container->has(ValidatorInterface::class)) {
+            return null;
+        }
+
+        return $this->container->get(ValidatorInterface::class);
     }
 }

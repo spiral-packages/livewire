@@ -29,6 +29,7 @@ final class ComponentCommand extends AbstractCommand
 
     public function perform(): int
     {
+        /** @psalm-suppress TooManyArguments */
         $declaration = $this->createDeclaration(ComponentDeclaration::class, [
             'alias' => \strtolower($this->name),
         ]);
