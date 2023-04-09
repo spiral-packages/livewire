@@ -52,7 +52,7 @@ class ArgumentTypecast
 
         if ($type instanceof \ReflectionUnionType) {
             foreach ($type->getTypes() as $type) {
-                if ($type->isBuiltin()) {
+                if ($type instanceof \ReflectionNamedType && $type->isBuiltin()) {
                     return $type;
                 }
             }
