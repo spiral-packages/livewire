@@ -44,7 +44,7 @@ final class SpiralValidator implements ValidatorInterface
 
         $validator = $this->validation->validate(
             [$property => $value],
-            array_filter(
+            \array_filter(
                 $component->validationRules(),
                 static fn (string $key): bool => $key === $property,
                 \ARRAY_FILTER_USE_KEY

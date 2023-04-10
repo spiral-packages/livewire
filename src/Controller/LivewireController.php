@@ -7,11 +7,12 @@ namespace Spiral\Livewire\Controller;
 use Psr\Http\Message\ResponseInterface;
 use Spiral\Http\Request\InputManager;
 use Spiral\Http\ResponseWrapper;
+use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Livewire;
 use Spiral\Livewire\Request;
 
 /**
- * @psalm-import-type TComponentName from \Spiral\Livewire\Component\LivewireComponent
+ * @psalm-import-type TComponentName from LivewireComponent
  */
 final class LivewireController
 {
