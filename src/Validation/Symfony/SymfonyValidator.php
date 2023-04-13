@@ -14,24 +14,16 @@ use Spiral\Livewire\Validation\ValidatorInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints\Collection;
-use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
-use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface as SymfonyValidatorInterface;
 
 final class SymfonyValidator implements ValidatorInterface
 {
-    private SymfonyValidatorInterface $validation;
-
     public function __construct(
-        ConstraintValidatorFactoryInterface $validatorFactory,
+        private readonly SymfonyValidatorInterface $validator,
         private readonly ReaderInterface $reader,
         private readonly DataAccessorInterface $dataAccessor
     ) {
-        $this->validation = Validation::createValidatorBuilder()
-            ->enableAnnotationMapping()
-            ->setConstraintValidatorFactory($validatorFactory)
-            ->getValidator();
     }
 
     public function validate(LivewireComponent $component): void
@@ -40,7 +32,7 @@ final class SymfonyValidator implements ValidatorInterface
             return;
         }
 
-        $violations = $this->validation->validate(
+        $violations = $this->validator->validate(
             $component instanceof ShouldBeValidated ? $this->dataAccessor->getData($component) : $component,
             $component instanceof ShouldBeValidated
                 ? new Collection(fields: $component->validationRules(), allowExtraFields: true)
@@ -56,7 +48,7 @@ final class SymfonyValidator implements ValidatorInterface
     public function validateProperty(string $property, mixed $value, LivewireComponent $component): void
     {
         if ($component instanceof ShouldBeValidated) {
-            $violations = $this->validation->validate(
+            $violations = $this->validator->validate(
                 [$property => $value],
                 \array_filter(
                     $component->validationRules(),
@@ -76,7 +68,7 @@ final class SymfonyValidator implements ValidatorInterface
             return;
         }
 
-        $violations = $this->validation->validate(
+        $violations = $this->validator->validate(
             [$property => $value],
             new Collection([$property => $constraints]),
             $component->toArray()['validationContext']

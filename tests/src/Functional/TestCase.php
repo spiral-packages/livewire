@@ -15,7 +15,7 @@ use Spiral\Validation\Laravel\Bootloader\ValidatorBootloader as LaravelValidator
 use Spiral\Validation\Symfony\Bootloader\ValidatorBootloader as SymfonyValidatorBootloader;
 use Spiral\Validator\Bootloader\ValidatorBootloader as SpiralValidatorBootloader;
 
-abstract class TestCase extends \Spiral\Testing\TestCase
+class TestCase extends \Spiral\Testing\TestCase
 {
     protected const TEMPLATE_ENGINE = 'twig';
     protected const VALIDATOR = 'spiral';

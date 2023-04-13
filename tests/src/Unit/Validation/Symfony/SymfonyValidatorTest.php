@@ -7,8 +7,9 @@ namespace Spiral\Livewire\Tests\Unit\Validation\Symfony;
 use PHPUnit\Framework\TestCase;
 use Spiral\Attributes\ReaderInterface;
 use Spiral\Livewire\Component\DataAccessorInterface;
+use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Validation\Symfony\SymfonyValidator;
-use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class SymfonyValidatorTest extends TestCase
 {
@@ -18,7 +19,7 @@ final class SymfonyValidatorTest extends TestCase
     public function testFormatPath(string $propertyPath, string $expected): void
     {
         $validator = new SymfonyValidator(
-            $this->createMock(ConstraintValidatorFactoryInterface::class),
+            $this->createMock(ValidatorInterface::class),
             $this->createMock(ReaderInterface::class),
             $this->createMock(DataAccessorInterface::class),
         );
@@ -28,7 +29,21 @@ final class SymfonyValidatorTest extends TestCase
         $this->assertSame($expected, $ref->invoke($validator, $propertyPath));
     }
 
-    public function pathDataProvider(): \Traversable
+    public function testComponentShouldNotBeValidated(): void
+    {
+        $sfValidator = $this->createMock(ValidatorInterface::class);
+        $sfValidator->expects($this->never())->method('validate');
+
+        $validator = new SymfonyValidator(
+            $sfValidator,
+            $this->createMock(ReaderInterface::class),
+            $this->createMock(DataAccessorInterface::class),
+        );
+
+        $validator->validate(new class () extends LivewireComponent {});
+    }
+
+    public static function pathDataProvider(): \Traversable
     {
         yield ['name', 'name'];
         yield ['[first_name]', 'first_name'];
