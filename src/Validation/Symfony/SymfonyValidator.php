@@ -50,11 +50,11 @@ final class SymfonyValidator implements ValidatorInterface
         if ($component instanceof ShouldBeValidated) {
             $violations = $this->validator->validate(
                 [$property => $value],
-                \array_filter(
+                new Collection(\array_filter(
                     $component->validationRules(),
                     static fn (string $key): bool => $key === $property,
                     \ARRAY_FILTER_USE_KEY
-                ),
+                )),
                 $component->toArray()['validationContext']
             );
 
@@ -68,9 +68,10 @@ final class SymfonyValidator implements ValidatorInterface
             return;
         }
 
-        $violations = $this->validator->validate(
-            [$property => $value],
-            new Collection([$property => $constraints]),
+        $violations = $this->validator->validatePropertyValue(
+            $component,
+            $property,
+            $value,
             $component->toArray()['validationContext']
         );
 

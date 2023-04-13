@@ -50,4 +50,34 @@ final class SymfonyValidatorTest extends TestCase
         $this->assertSame('This field is missing.', $errors['address.city'][0]);
         $this->assertSame('This field is missing.', $errors['address.street'][0]);
     }
+
+    public function testValidationPropertyWithInterface(): void
+    {
+        /** @var SymfonyValidator $validator */
+        $validator = $this->getContainer()->get(SymfonyValidator::class);
+        $component = $this->getContainer()->get(ComponentRegistryInterface::class)->get('symfony-with-interface');
+
+        try {
+            $validator->validateProperty('name', null, $component);
+        } catch (ValidationException $e) {
+            $errors = $e->getErrors();
+        }
+
+        $this->assertSame('This value should not be blank.', $errors['name'][0]);
+    }
+
+    public function testValidationPropertyWithAttribute(): void
+    {
+        /** @var SymfonyValidator $validator */
+        $validator = $this->getContainer()->get(SymfonyValidator::class);
+        $component = $this->getContainer()->get(ComponentRegistryInterface::class)->get('symfony-with-attributes');
+
+        try {
+            $validator->validateProperty('name', null, $component);
+        } catch (ValidationException $e) {
+            $errors = $e->getErrors();
+        }
+
+        $this->assertSame('This value should not be blank.', $errors['name'][0]);
+    }
 }
