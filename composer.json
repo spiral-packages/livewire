@@ -12,8 +12,8 @@
         "adbario/php-dot-notation": "^3.3",
         "spiral-packages/league-event": "^1.0.1",
         "spiral/attributes": "^3.0",
-        "spiral/encrypter": "^3.6",
-        "spiral/scaffolder": "^3.6",
+        "spiral/encrypter": "^3.7",
+        "spiral/scaffolder": "^3.7",
         "symfony/property-access": "^5.4.22 || ^6.0"
     },
     "require-dev": {
@@ -25,7 +25,7 @@
         "spiral/testing": "^2.2",
         "vimeo/psalm": "^5.9",
         "spiral/validator": "^1.3",
-        "spiral/translator": "^3.6",
+        "spiral/translator": "^3.7",
         "spiral/nyholm-bridge": "^1.3",
         "spiral-packages/symfony-validator": "^1.3",
         "spiral-packages/laravel-validator": "^1.1"

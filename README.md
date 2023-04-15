@@ -18,7 +18,7 @@ The package is under active development. Don't use it in your applications.
 Make sure that your server is configured with following PHP version and extensions:
 
 - PHP 8.1+
-- Spiral framework 3.6+
+- Spiral framework 3.7+
 
 ## Installation
 
