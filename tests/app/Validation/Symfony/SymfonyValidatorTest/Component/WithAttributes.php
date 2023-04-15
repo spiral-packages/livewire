@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace Spiral\Livewire\Tests\App\Validation\Symfony\SymfonyValidatorTest\Component;
 
-use Spiral\Core\Container;
 use Spiral\Livewire\Attribute\Component;
 use Spiral\Livewire\Attribute\Model;
 use Spiral\Livewire\Component\LivewireComponent;
-use Spiral\Views\Engine\Native\NativeView;
-use Spiral\Views\ViewSource;
 use Symfony\Component\Validator\Constraints\Collection;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\EqualTo;
