@@ -16,7 +16,11 @@ final class LivewireNodeVisitorTest extends TestCase
 
         $this->getContainer()->bind(ServerRequestInterface::class, $request);
 
-        $this->assertViewContains('counter.twig', [], '<h1>1</h1>');
+        $this->assertViewContains(
+            'template/twig/node-visitor/livewire-node-visitor-test/counter.twig',
+            [],
+            '<h1>1</h1>'
+        );
     }
 
     public function testRenderWithDefaultValue(): void
@@ -25,7 +29,11 @@ final class LivewireNodeVisitorTest extends TestCase
 
         $this->getContainer()->bind(ServerRequestInterface::class, $request);
 
-        $this->assertViewContains('counter_with_default_value.twig', [], '<h1>5</h1>');
+        $this->assertViewContains(
+            'template/twig/node-visitor/livewire-node-visitor-test/counter_with_default_value.twig',
+            [],
+            '<h1>5</h1>'
+        );
     }
 
     public function testRenderWithDefaultValueAndInjectedDependency(): void
@@ -34,6 +42,10 @@ final class LivewireNodeVisitorTest extends TestCase
 
         $this->getContainer()->bind(ServerRequestInterface::class, $request);
 
-        $this->assertViewContains('with_mount_dependency.twig', [], '<h1>6</h1>');
+        $this->assertViewContains(
+            'template/twig/node-visitor/livewire-node-visitor-test/with_mount_dependency.twig',
+            [],
+            '<h1>6</h1>'
+        );
     }
 }

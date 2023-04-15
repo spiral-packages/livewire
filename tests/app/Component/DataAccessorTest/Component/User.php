@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Livewire\Tests\App\Component;
+namespace Spiral\Livewire\Tests\App\Component\DataAccessorTest\Component;
 
 use Spiral\Livewire\Attribute\Component;
 use Spiral\Livewire\Attribute\Model;
 use Spiral\Livewire\Component\LivewireComponent;
-use Spiral\Livewire\Tests\App\DataTransferObject\Address;
+use Spiral\Livewire\Tests\App\Component\DataAccessorTest\DataTransferObject\Address;
 
-#[Component(name: 'user')]
+#[Component(name: 'component-data-accessor-test-user')]
 final class User extends LivewireComponent
 {
     #[Model]

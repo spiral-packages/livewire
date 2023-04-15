@@ -16,7 +16,9 @@ final class SymfonyValidatorTest extends TestCase
     public function testValidationWithInterface(): void
     {
         $validator = $this->getContainer()->get(SymfonyValidator::class);
-        $component = $this->getContainer()->get(ComponentRegistryInterface::class)->get('symfony-with-interface');
+        $component = $this->getContainer()
+            ->get(ComponentRegistryInterface::class)
+            ->get('validation-symfony-symfony-validator-test-with-interface');
 
         try {
             $validator->validate($component);
@@ -35,7 +37,9 @@ final class SymfonyValidatorTest extends TestCase
     public function testValidationWithAttributes(): void
     {
         $validator = $this->getContainer()->get(SymfonyValidator::class);
-        $component = $this->getContainer()->get(ComponentRegistryInterface::class)->get('symfony-with-attributes');
+        $component = $this->getContainer()
+            ->get(ComponentRegistryInterface::class)
+            ->get('validation-symfony-symfony-validator-test-with-attributes');
 
         try {
             $validator->validate($component);
@@ -55,7 +59,9 @@ final class SymfonyValidatorTest extends TestCase
     {
         /** @var SymfonyValidator $validator */
         $validator = $this->getContainer()->get(SymfonyValidator::class);
-        $component = $this->getContainer()->get(ComponentRegistryInterface::class)->get('symfony-with-interface');
+        $component = $this->getContainer()
+            ->get(ComponentRegistryInterface::class)
+            ->get('validation-symfony-symfony-validator-test-with-interface');
 
         try {
             $validator->validateProperty('name', null, $component);
@@ -70,7 +76,9 @@ final class SymfonyValidatorTest extends TestCase
     {
         /** @var SymfonyValidator $validator */
         $validator = $this->getContainer()->get(SymfonyValidator::class);
-        $component = $this->getContainer()->get(ComponentRegistryInterface::class)->get('symfony-with-attributes');
+        $component = $this->getContainer()
+            ->get(ComponentRegistryInterface::class)
+            ->get('validation-symfony-symfony-validator-test-with-attributes');
 
         try {
             $validator->validateProperty('name', null, $component);

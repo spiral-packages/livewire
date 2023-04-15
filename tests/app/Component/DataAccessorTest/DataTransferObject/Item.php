@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Livewire\Tests\App\DataTransferObject;
+namespace Spiral\Livewire\Tests\App\Component\DataAccessorTest\DataTransferObject;
 
 final class Item
 {

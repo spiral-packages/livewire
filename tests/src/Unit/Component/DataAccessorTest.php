@@ -9,10 +9,10 @@ use Spiral\Attributes\AttributeReader;
 use Spiral\Livewire\Bootloader\LivewireBootloader;
 use Spiral\Livewire\Component\DataAccessor;
 use Spiral\Livewire\Component\LivewireComponent;
-use Spiral\Livewire\Tests\App\Component\User;
-use Spiral\Livewire\Tests\App\DataTransferObject\Address;
-use Spiral\Livewire\Tests\App\DataTransferObject\Item;
-use Spiral\Livewire\Tests\App\DataTransferObject\Order;
+use Spiral\Livewire\Tests\App\Component\DataAccessorTest\Component\User;
+use Spiral\Livewire\Tests\App\Component\DataAccessorTest\DataTransferObject\Address;
+use Spiral\Livewire\Tests\App\Component\DataAccessorTest\DataTransferObject\Item;
+use Spiral\Livewire\Tests\App\Component\DataAccessorTest\DataTransferObject\Order;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 final class DataAccessorTest extends TestCase

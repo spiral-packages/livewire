@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Livewire\Tests\App\Component\Validation\Symfony;
+namespace Spiral\Livewire\Tests\App\Validation\Symfony\SymfonyValidatorTest\Component;
 
 use Spiral\Core\Container;
 use Spiral\Livewire\Attribute\Component;
 use Spiral\Livewire\Attribute\Model;
 use Spiral\Livewire\Component\LivewireComponent;
+use Spiral\Livewire\Validation\ShouldBeValidated;
 use Spiral\Views\Engine\Native\NativeView;
 use Spiral\Views\ViewSource;
 use Symfony\Component\Validator\Constraints\Collection;
@@ -16,39 +17,40 @@ use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-#[Component(name: 'symfony-with-attributes')]
-final class WithAttributes extends LivewireComponent
+#[Component(name: 'validation-symfony-symfony-validator-test-with-interface')]
+final class WithInterface extends LivewireComponent implements ShouldBeValidated
 {
-    #[NotBlank]
     #[Model]
     public string $name;
 
-    #[Email]
-    #[NotBlank(message: 'Email is empty!!!')]
     #[Model]
     public string $email;
 
-    #[NotBlank]
-    #[EqualTo(propertyPath: 'repeatedPassword')]
     #[Model]
     public string $password;
 
     #[Model]
     public string $repeatedPassword;
 
-    #[NotBlank]
-    #[GreaterThan(value: 0)]
     #[Model]
     public int $age;
 
-    #[Collection(
-        fields: [
-            'city' => new NotBlank(),
-            'street' => new NotBlank()
-        ]
-    )]
     #[Model]
     public array $address = [];
+
+    public function validationRules(): array
+    {
+        return [
+            'name' => new NotBlank(),
+            'email' => [new NotBlank(message: 'Email is empty!!!'), new Email()],
+            'password' => [new NotBlank(), new EqualTo(propertyPath: 'repeatedPassword')],
+            'age' => [new NotBlank(), new GreaterThan(value: 0)],
+            'address' => new Collection([
+                'city' => new NotBlank(),
+                'street' => new NotBlank(),
+            ]),
+        ];
+    }
 
     public function __construct()
     {

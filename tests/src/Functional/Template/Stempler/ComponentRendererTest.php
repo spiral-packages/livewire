@@ -18,7 +18,11 @@ final class ComponentRendererTest extends TestCase
 
         $this->getContainer()->bind(ServerRequestInterface::class, $request);
 
-        $this->assertViewContains('counter.dark.php', [], '<h1>1</h1>');
+        $this->assertViewContains(
+            'template/stempler/component-renderer-test/counter.dark.php',
+            [],
+            '<h1>1</h1>'
+        );
     }
 
     public function testRenderWithDefaultValue(): void
@@ -27,7 +31,11 @@ final class ComponentRendererTest extends TestCase
 
         $this->getContainer()->bind(ServerRequestInterface::class, $request);
 
-        $this->assertViewContains('counter_with_default_value.dark.php', [], '<h1>5</h1>');
+        $this->assertViewContains(
+            'template/stempler/component-renderer-test/counter_with_default_value.dark.php',
+            [],
+            '<h1>5</h1>'
+        );
     }
 
     public function testRenderWithDefaultValueAndInjectedDependency(): void
@@ -36,6 +44,10 @@ final class ComponentRendererTest extends TestCase
 
         $this->getContainer()->bind(ServerRequestInterface::class, $request);
 
-        $this->assertViewContains('with_mount_dependency.dark.php', [], '<h1>6</h1>');
+        $this->assertViewContains(
+            'template/stempler/component-renderer-test/with_mount_dependency.dark.php',
+            [],
+            '<h1>6</h1>'
+        );
     }
 }

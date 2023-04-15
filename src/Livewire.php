@@ -71,10 +71,13 @@ final class Livewire
 
         $this->initialHydrate($component, $request);
 
-        $component->mount(...$this->resolver->resolveArguments(
-            new \ReflectionMethod($component, 'mount'),
-            $this->typecast->cast($params, new \ReflectionMethod($component, 'mount'))
-        ));
+        if (\method_exists($component, 'mount')) {
+            $component->mount(...$this->resolver->resolveArguments(
+                new \ReflectionMethod($component, 'mount'),
+                $this->typecast->cast($params, new \ReflectionMethod($component, 'mount'))
+            ));
+        }
+
         $component->renderToView();
         $response = new Response($request->fingerprint, $request->memo);
         $this->initialDehydrate($component, $response);

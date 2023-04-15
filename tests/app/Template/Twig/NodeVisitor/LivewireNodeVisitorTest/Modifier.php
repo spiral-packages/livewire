@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Livewire\Tests\App;
+namespace Spiral\Livewire\Tests\App\Template\Twig\NodeVisitor\LivewireNodeVisitorTest;
 
 final class Modifier
 {

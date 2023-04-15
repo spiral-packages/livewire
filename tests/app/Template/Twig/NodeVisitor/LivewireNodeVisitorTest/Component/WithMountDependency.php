@@ -2,14 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Livewire\Tests\App\Component;
+namespace Spiral\Livewire\Tests\App\Template\Twig\NodeVisitor\LivewireNodeVisitorTest\Component;
 
 use Spiral\Livewire\Attribute\Component;
 use Spiral\Livewire\Attribute\Model;
 use Spiral\Livewire\Component\LivewireComponent;
-use Spiral\Livewire\Tests\App\Modifier;
+use Spiral\Livewire\Tests\App\Template\Twig\NodeVisitor\LivewireNodeVisitorTest\Modifier;
 
-#[Component(name: 'with-mount-dependency', template: 'components/counter')]
+#[Component(
+    name: 'template-twig-node-visitor-livewire-node-visitor-test-with-mount-dependency',
+    template: 'template/twig/node-visitor/livewire-node-visitor-test/components/counter'
+)]
 final class WithMountDependency extends LivewireComponent
 {
     #[Model]
