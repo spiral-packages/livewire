@@ -9,10 +9,11 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "adbario/php-dot-notation": "^3.3",
         "spiral-packages/league-event": "^1.0.1",
         "spiral/attributes": "^3.0",
-        "spiral/scaffolder": "^3.6",
         "spiral/encrypter": "^3.6",
+        "spiral/scaffolder": "^3.6",
         "symfony/property-access": "^5.4.22 || ^6.0"
     },
     "require-dev": {

@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Spiral\Livewire\Validation\Symfony;
 
+use Adbar\Dot;
 use Spiral\Attributes\ReaderInterface;
 use Spiral\Livewire\Attribute\Model;
 use Spiral\Livewire\Component\DataAccessorInterface;
 use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Exception\Validation\ValidationException;
+use Spiral\Livewire\Str;
 use Spiral\Livewire\Validation\ShouldBeValidated;
 use Spiral\Livewire\Validation\ValidatorInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
@@ -47,36 +49,34 @@ final class SymfonyValidator implements ValidatorInterface
 
     public function validateProperty(string $property, mixed $value, LivewireComponent $component): void
     {
-        if ($component instanceof ShouldBeValidated) {
-            $violations = $this->validator->validate(
-                [$property => $value],
-                new Collection(\array_filter(
-                    $component->validationRules(),
-                    static fn (string $key): bool => $key === $property,
-                    \ARRAY_FILTER_USE_KEY
-                )),
-                $component->toArray()['validationContext']
-            );
-
-            if ($violations->count() > 0) {
-                throw new ValidationException($this->wrapErrors($violations));
-            }
-        }
-
-        $constraints = $this->getPropertyConstraints(new \ReflectionProperty($component, $property));
-        if ($constraints === []) {
+        if (!$component instanceof ShouldBeValidated && !$this->hasConstraints($component)) {
             return;
         }
 
-        $violations = $this->validator->validatePropertyValue(
-            $component,
-            $property,
-            $value,
-            $component->toArray()['validationContext']
-        );
+        if ($component instanceof ShouldBeValidated) {
+            $dot = new Dot();
+            $violations = $this->validator->validate(
+                $dot->set($property, $value)->all(),
+                new Collection(fields: $component->validationRules(), allowExtraFields: true),
+                $component->toArray()['validationContext']
+            );
+        } else {
+            $propertyValue = $this->dataAccessor->getValue($component, Str::before($property, '.'));
+            $dot = new Dot($propertyValue);
+
+            $violations = $this->validator->validatePropertyValue(
+                $component,
+                Str::before($property, '.'),
+                str_contains($property, '.') ? $dot->set(Str::after($property, '.'), $value)->all() : $value,
+                $component->toArray()['validationContext']
+            );
+        }
 
         if ($violations->count() > 0) {
-            throw new ValidationException($this->wrapErrors($violations));
+            $errors = $this->wrapErrors($violations);
+            if (isset($errors[$property])) {
+                throw new ValidationException([$property => $errors[$property]]);
+            }
         }
     }
 

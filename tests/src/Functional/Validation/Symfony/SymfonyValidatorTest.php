@@ -72,6 +72,23 @@ final class SymfonyValidatorTest extends TestCase
         $this->assertSame('This value should not be blank.', $errors['name'][0]);
     }
 
+    public function testValidationNestedPropertyWithInterface(): void
+    {
+        /** @var SymfonyValidator $validator */
+        $validator = $this->getContainer()->get(SymfonyValidator::class);
+        $component = $this->getContainer()
+            ->get(ComponentRegistryInterface::class)
+            ->get('validation-symfony-symfony-validator-test-with-interface');
+
+        try {
+            $validator->validateProperty('address.street', null, $component);
+        } catch (ValidationException $e) {
+            $errors = $e->getErrors();
+        }
+
+        $this->assertSame('This value should not be blank.', $errors['address.street'][0]);
+    }
+
     public function testValidationPropertyWithAttribute(): void
     {
         /** @var SymfonyValidator $validator */
@@ -87,5 +104,22 @@ final class SymfonyValidatorTest extends TestCase
         }
 
         $this->assertSame('This value should not be blank.', $errors['name'][0]);
+    }
+
+    public function testValidationNestedPropertyWithAttribute(): void
+    {
+        /** @var SymfonyValidator $validator */
+        $validator = $this->getContainer()->get(SymfonyValidator::class);
+        $component = $this->getContainer()
+            ->get(ComponentRegistryInterface::class)
+            ->get('validation-symfony-symfony-validator-test-with-attributes');
+
+        try {
+            $validator->validateProperty('address.street', null, $component);
+        } catch (ValidationException $e) {
+            $errors = $e->getErrors();
+        }
+
+        $this->assertSame('This value should not be blank.', $errors['address.street'][0]);
     }
 }

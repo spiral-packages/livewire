@@ -51,9 +51,4 @@ final class WithInterface extends LivewireComponent implements ShouldBeValidated
             ]),
         ];
     }
-
-    public function __construct()
-    {
-        $this->preRenderedView = new NativeView(new ViewSource('', '', ''), new Container());
-    }
 }

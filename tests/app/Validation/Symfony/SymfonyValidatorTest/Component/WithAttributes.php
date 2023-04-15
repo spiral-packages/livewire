@@ -49,9 +49,4 @@ final class WithAttributes extends LivewireComponent
     )]
     #[Model]
     public array $address = [];
-
-    public function __construct()
-    {
-        $this->preRenderedView = new NativeView(new ViewSource('', '', ''), new Container());
-    }
 }
