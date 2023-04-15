@@ -35,7 +35,7 @@ abstract class LivewireComponent
     use TracksRenderedChildren;
 
     protected ViewsInterface $views;
-    protected ViewInterface $preRenderedView;
+    protected ?ViewInterface $preRenderedView = null;
     protected array $renderContext = [];
     protected array $validationContext = [];
     protected array $forStack = [];
@@ -161,7 +161,7 @@ abstract class LivewireComponent
      *     errors: array,
      *     shouldSkipRender: bool,
      *     redirectTo: ?non-empty-string,
-     *     preRenderedView: ViewInterface
+     *     preRenderedView: ViewInterface|null
      * }
      */
     public function toArray(): array

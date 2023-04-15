@@ -6,6 +6,7 @@ namespace Spiral\Livewire\Component;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Spiral\Livewire\Event\Component\ViewRender;
+use Spiral\Views\ViewInterface;
 
 final class Renderer implements RendererInterface
 {
@@ -26,6 +27,7 @@ final class Renderer implements RendererInterface
             return null;
         }
 
+        /** @var ViewInterface $view */
         $view = $data['preRenderedView'];
 
         /** @var non-empty-string $output */
