@@ -21,7 +21,7 @@ use Spiral\Livewire\Middleware\Component\Registry\InitialHydrationMiddlewareRegi
 use Spiral\Livewire\Service\ArgumentTypecast;
 
 /**
- * @psalm-import-type TComponentName from \Spiral\Livewire\Component\LivewireComponent
+ * @psalm-import-type TComponentName from LivewireComponent
  */
 final class Livewire
 {

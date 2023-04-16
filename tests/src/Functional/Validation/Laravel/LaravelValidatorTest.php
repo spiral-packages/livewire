@@ -34,7 +34,7 @@ final class LaravelValidatorTest extends TestCase
         $this->assertSame('validation.required', $errors['address.street'][0]);
     }
 
-    public function testValidationPropertyWithInterface(): void
+    public function testValidationProperty(): void
     {
         $validator = $this->getContainer()->get(LaravelValidator::class);
         $component = $this->getContainer()
