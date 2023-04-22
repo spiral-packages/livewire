@@ -4,35 +4,32 @@ declare(strict_types=1);
 
 namespace Spiral\Livewire\Component;
 
+use Adbar\Dot;
 use Spiral\Attributes\ReaderInterface;
 use Spiral\Livewire\Attribute\Model;
 use Spiral\Livewire\Exception\Component\ModelNotWritableException;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 final class DataAccessor implements DataAccessorInterface
 {
     public function __construct(
-        private readonly PropertyAccessorInterface $propertyAccessor,
+        private readonly Serializer $serializer,
         private readonly ReaderInterface $reader
     ) {
     }
 
     public function getData(LivewireComponent $component): array
     {
-        $data = [];
+        $models = [];
         foreach ((new \ReflectionClass($component))->getProperties() as $property) {
             if (null !== $this->reader->firstPropertyMetadata($property, Model::class)) {
-                $value = $this->propertyAccessor->isReadable($component, $property->getName())
-                    ? $this->propertyAccessor->getValue($component, $property->getName())
-                    : null;
-
-                $data[$property->getName()] = match (true) {
-                    \is_array($value) => $this->getArrayData($value),
-                    \is_object($value) => $this->getObjectData($value),
-                    default => $value
-                };
+                $models[] = $property->getName();
             }
         }
+
+        /** @var array $data */
+        $data = $this->serializer->normalize(data: $component, context: [AbstractNormalizer::ATTRIBUTES => $models]);
 
         return $data;
     }
@@ -44,37 +41,14 @@ final class DataAccessor implements DataAccessorInterface
      */
     public function setValue(LivewireComponent $component, string $propertyPath, mixed $value): void
     {
-        $model = $component;
-        /** @var array<non-empty-string> $pathParts */
-        $pathParts = explode('.', $propertyPath);
+        $data = new Dot($this->getData($component));
+        $data->set($propertyPath, $value);
 
-        $nextValueArrayKey = false;
-        foreach ($pathParts as $key => $part) {
-            if ($nextValueArrayKey) {
-                $pathParts[$key] = '['.$part.']';
-            }
-            $nextValueArrayKey = false;
-            $model = $this->getModelValue($model, $part);
-            if (\is_array($model)) {
-                $nextValueArrayKey = true;
-            }
-        }
-
-        $propertyPath = '';
-        foreach ($pathParts as $part) {
-            $propertyPath .= str_starts_with($part, '[') || '' === $propertyPath ? $part : '.'.$part;
-        }
-
-        // Set the value of the target property.
-        if (!$this->propertyAccessor->isWritable($component, $propertyPath)) {
-            throw new ModelNotWritableException(sprintf(
-                'Unable to set component data. Model `%s` not found on component: `%s`.',
-                $propertyPath,
-                $component->getComponentName()
-            ));
-        }
-
-        $this->propertyAccessor->setValue($component, $propertyPath, $value);
+        $this->serializer->denormalize(
+            data: $data->all(),
+            type: $component::class,
+            context: [AbstractNormalizer::OBJECT_TO_POPULATE => $component]
+        );
     }
 
     /**
@@ -82,13 +56,9 @@ final class DataAccessor implements DataAccessorInterface
      */
     public function getValue(LivewireComponent $component, string $propertyPath, mixed $default = null): mixed
     {
-        $model = $component;
-        /** @var non-empty-string $part */
-        foreach (explode('.', $propertyPath) as $part) {
-            $model = $this->getModelValue($model, $part);
-        }
+        $data = new Dot($this->getData($component));
 
-        return $model;
+        return $data->get($propertyPath, $default);
     }
 
     /**
@@ -105,53 +75,5 @@ final class DataAccessor implements DataAccessorInterface
         }
 
         return false;
-    }
-
-    private function getObjectData(object $object): array
-    {
-        $data = [];
-        foreach ((new \ReflectionClass($object))->getProperties() as $property) {
-            $value = $this->propertyAccessor->isReadable($object, $property->getName())
-                ? $this->propertyAccessor->getValue($object, $property->getName())
-                : null;
-
-            $data[$property->getName()] = match (true) {
-                \is_array($value) => $this->getArrayData($value),
-                \is_object($value) => $this->getObjectData($value),
-                default => $value
-            };
-        }
-
-        return $data;
-    }
-
-    private function getArrayData(array $array): array
-    {
-        $data = [];
-        foreach ($array as $key => $arrayValue) {
-            $data[$key] = match (true) {
-                \is_array($arrayValue) => $this->getArrayData($arrayValue),
-                \is_object($arrayValue) => $this->getObjectData($arrayValue),
-                default => $arrayValue
-            };
-        }
-
-        return $data;
-    }
-
-    /**
-     * @param non-empty-string $propertyPath
-     */
-    public function getModelValue(object|array $model, string $propertyPath, mixed $default = null): mixed
-    {
-        if (\is_array($model)) {
-            $propertyPath = '['.$propertyPath.']';
-        }
-
-        if (!$this->propertyAccessor->isReadable($model, $propertyPath)) {
-            return $default;
-        }
-
-        return $this->propertyAccessor->getValue($model, $propertyPath);
     }
 }

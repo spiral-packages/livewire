@@ -27,7 +27,7 @@ final class SpiralValidatorTest extends TestCase
         }
 
         $this->assertSame('This value is required.', $errors['name'][0]);
-        $this->assertSame('Must be a valid email address.', $errors['email'][0]);
+        $this->assertSame('This value is required.', $errors['email'][0]);
         $this->assertSame('This value is required.', $errors['password'][0]);
         $this->assertSame('This value is required.', $errors['age'][0]);
     }

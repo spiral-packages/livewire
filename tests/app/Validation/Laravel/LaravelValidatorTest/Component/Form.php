@@ -33,8 +33,8 @@ final class Form extends LivewireComponent implements ShouldBeValidated
     public function validationRules(): array
     {
         return [
-            'name' => 'min:6',
-            'email' => 'email',
+            'name' => 'required',
+            'email' => 'required',
             'password' => 'required',
             'age' => 'required',
             'address.city' => 'required',

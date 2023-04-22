@@ -6,9 +6,15 @@ namespace Spiral\Livewire\Tests\App\Component\DataAccessorTest\DataTransferObjec
 
 final class Order
 {
-    public function __construct(
-        public int $id,
-        public array $items
-    ) {
+    public int $id;
+    public array $items;
+
+    public static function create(int $id, array $items): self
+    {
+        $self = new self();
+        $self->id = $id;
+        $self->items = $items;
+
+        return $self;
     }
 }

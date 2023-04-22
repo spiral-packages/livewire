@@ -6,9 +6,15 @@ namespace Spiral\Livewire\Tests\App\Component\DataAccessorTest\DataTransferObjec
 
 final class Item
 {
-    public function __construct(
-        public string $name,
-        public float $price
-    ) {
+    public string $name;
+    public float $price;
+
+    public static function create(string $name, float $price): self
+    {
+        $self = new self();
+        $self->name = $name;
+        $self->price = $price;
+
+        return $self;
     }
 }

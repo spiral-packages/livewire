@@ -27,10 +27,9 @@ use Spiral\Livewire\Config\LivewireConfig;
 use Spiral\Livewire\Controller\LivewireController;
 use Spiral\Livewire\WireTrait;
 use Spiral\Router\Loader\Configurator\RoutingConfigurator;
+use Spiral\Serializer\Symfony\Bootloader\SerializerBootloader;
 use Spiral\Tokenizer\Bootloader\TokenizerListenerBootloader;
 use Spiral\Views\Bootloader\ViewsBootloader;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 final class LivewireBootloader extends Bootloader
 {
@@ -42,6 +41,7 @@ final class LivewireBootloader extends Bootloader
         ConfigBootloader::class,
         ComponentMiddlewareBootloader::class,
         ListenerBootloader::class,
+        SerializerBootloader::class,
     ];
 
     protected const SINGLETONS = [
@@ -52,7 +52,6 @@ final class LivewireBootloader extends Bootloader
         RendererInterface::class => Renderer::class,
         DataAccessorInterface::class => DataAccessor::class,
         ActionHandlerInterface::class => ActionHandler::class,
-        PropertyAccessorInterface::class => [self::class, 'initPropertyAccessor'],
     ];
 
     public function init(ViewsBootloader $views, DirectoriesInterface $dirs): void
@@ -91,12 +90,5 @@ final class LivewireBootloader extends Bootloader
         $kernel->bootstrapped(static function (ComponentProcessorRegistry $registry): void {
             $registry->process();
         });
-    }
-
-    private function initPropertyAccessor(): PropertyAccessorInterface
-    {
-        return PropertyAccess::createPropertyAccessorBuilder()
-            ->disableMagicMethods()
-            ->getPropertyAccessor();
     }
 }

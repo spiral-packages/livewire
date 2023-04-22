@@ -14,7 +14,8 @@
         "spiral/attributes": "^3.0",
         "spiral/encrypter": "^3.7",
         "spiral/scaffolder": "^3.7",
-        "symfony/property-access": "^5.4.22 || ^6.0"
+        "symfony/property-access": "^5.4.22 || ^6.0",
+        "spiral-packages/symfony-serializer": "^2.0"
     },
     "require-dev": {
         "spiral/twig-bridge": "^2.0.1",

@@ -6,10 +6,17 @@ namespace Spiral\Livewire\Tests\App\Component\DataAccessorTest\DataTransferObjec
 
 final class Address
 {
-    public function __construct(
-        public string $street,
-        public string $city,
-        public string $state
-    ) {
+    public string $street;
+    public string $city;
+    public string $state;
+
+    public static function create(string $street, string $city, string $state): self
+    {
+        $self = new self();
+        $self->street = $street;
+        $self->city = $city;
+        $self->state = $state;
+
+        return $self;
     }
 }

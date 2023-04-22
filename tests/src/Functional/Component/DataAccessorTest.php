@@ -2,35 +2,25 @@
 
 declare(strict_types=1);
 
-namespace Spiral\Livewire\Tests\Unit\Component;
+namespace Spiral\Livewire\Tests\Functional\Component;
 
-use PHPUnit\Framework\TestCase;
-use Spiral\Attributes\AttributeReader;
-use Spiral\Livewire\Bootloader\LivewireBootloader;
-use Spiral\Livewire\Component\DataAccessor;
+use Spiral\Livewire\Attribute\Model;
+use Spiral\Livewire\Component\DataAccessorInterface;
 use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Tests\App\Component\DataAccessorTest\Component\User;
 use Spiral\Livewire\Tests\App\Component\DataAccessorTest\DataTransferObject\Address;
 use Spiral\Livewire\Tests\App\Component\DataAccessorTest\DataTransferObject\Item;
 use Spiral\Livewire\Tests\App\Component\DataAccessorTest\DataTransferObject\Order;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
+use Spiral\Livewire\Tests\Functional\TestCase;
 
 final class DataAccessorTest extends TestCase
 {
-    private PropertyAccessorInterface $propertyAccessor;
-
-    protected function setUp(): void
-    {
-        $ref = new \ReflectionMethod(LivewireBootloader::class, 'initPropertyAccessor');
-        $this->propertyAccessor = $ref->invoke(new LivewireBootloader());
-    }
-
     /**
      * @dataProvider getValueDataProvider
      */
     public function testGetValue(LivewireComponent $component, string $propertyPath, mixed $expectedValue): void
     {
-        $accessor = new DataAccessor($this->propertyAccessor, new AttributeReader());
+        $accessor = $this->getContainer()->get(DataAccessorInterface::class);
 
         $this->assertSame($expectedValue, $accessor->getValue($component, $propertyPath));
     }
@@ -40,7 +30,7 @@ final class DataAccessorTest extends TestCase
      */
     public function testSetValue(LivewireComponent $component, string $propertyPath, mixed $value): void
     {
-        $accessor = new DataAccessor($this->propertyAccessor, new AttributeReader());
+        $accessor = $this->getContainer()->get(DataAccessorInterface::class);
 
         $accessor->setValue($component, $propertyPath, $value);
 
@@ -49,20 +39,20 @@ final class DataAccessorTest extends TestCase
 
     public function testGetData(): void
     {
-        $accessor = new DataAccessor($this->propertyAccessor, new AttributeReader());
+        $accessor = $this->getContainer()->get(DataAccessorInterface::class);
         $orders = [
-            new Order(
+            Order::create(
                 id: 1,
                 items: [
-                    new Item(name: 'Widget', price: 19.99),
-                    new Item(name: 'Gizmo', price: 9.99),
+                    Item::create(name: 'Widget', price: 19.99),
+                    Item::create(name: 'Gizmo', price: 9.99),
                 ]
             ),
-            new Order(
+            Order::create(
                 id: 2,
                 items: [
-                    new Item(name: 'Thingamajig', price: 14.99),
-                    new Item(name: 'Doodad', price: 5.99),
+                    Item::create(name: 'Thingamajig', price: 14.99),
+                    Item::create(name: 'Doodad', price: 5.99),
                 ]
             ),
         ];
@@ -71,13 +61,9 @@ final class DataAccessorTest extends TestCase
         $user->id = 1;
         $user->name = 'John';
         $user->email = 'john@localhost';
-        $this->propertyAccessor->setValue(
-            $user,
-            'address',
-            new Address('123 Main St', 'Anytown', 'CA')
-        );
-        $this->propertyAccessor->setValue($user, 'phoneNumbers', ['555-1234', '555-5678']);
-        $this->propertyAccessor->setValue($user, 'orders', $orders);
+        $user->address = Address::create('123 Main St', 'Anytown', 'CA');
+        $user->phoneNumbers = ['555-1234', '555-5678'];
+        $user->orders = $orders;
 
         $this->assertSame([
             'id' => 1,
@@ -128,6 +114,7 @@ final class DataAccessorTest extends TestCase
         yield [
             new class extends LivewireComponent
             {
+                #[Model]
                 public string $name = 'foo';
             },
             'name',
@@ -136,6 +123,7 @@ final class DataAccessorTest extends TestCase
         yield [
             new class extends LivewireComponent
             {
+                #[Model]
                 private string $name = 'foo';
 
                 public function getName(): string
@@ -149,6 +137,7 @@ final class DataAccessorTest extends TestCase
         yield [
             new class extends LivewireComponent
             {
+                #[Model]
                 public array $prices = [10, 100.0];
             },
             'prices',
@@ -157,6 +146,7 @@ final class DataAccessorTest extends TestCase
         yield [
             new class extends LivewireComponent
             {
+                #[Model]
                 private array $prices = [10, 100.0];
 
                 public function getPrices(): array
@@ -170,10 +160,11 @@ final class DataAccessorTest extends TestCase
         yield [
             new class extends LivewireComponent
             {
+                #[Model]
                 public Address $address;
 
                 public function __construct() {
-                    $this->address = new Address('', 'New York', '');
+                    $this->address = Address::create('', 'New York', '');
                 }
             },
             'address.city',
@@ -182,6 +173,7 @@ final class DataAccessorTest extends TestCase
         yield [
             new class extends LivewireComponent
             {
+                #[Model]
                 public array $form = ['name' => 'John'];
             },
             'form.name',
@@ -190,13 +182,14 @@ final class DataAccessorTest extends TestCase
         yield [
             new class extends LivewireComponent
             {
+                #[Model]
                 public array $orders = [];
 
                 public function __construct()
                 {
                     $this->orders = [
-                        new Order(id: 1, items: [new Item(name: 'Test', price: 100.3)]),
-                        new Order(id: 2, items: [new Item(name: 'Test 2', price: 80.2)]),
+                        Order::create(id: 1, items: [Item::create(name: 'Test', price: 100.3)]),
+                        Order::create(id: 2, items: [Item::create(name: 'Test 2', price: 80.2)]),
                     ];
                 }
             },
@@ -210,6 +203,7 @@ final class DataAccessorTest extends TestCase
         yield [
             new class extends LivewireComponent
             {
+                #[Model]
                 public string $name;
             },
             'name',
@@ -218,6 +212,7 @@ final class DataAccessorTest extends TestCase
         yield [
             new class extends LivewireComponent
             {
+                #[Model]
                 private string $name;
 
                 public function setName(string $name): void
@@ -236,6 +231,7 @@ final class DataAccessorTest extends TestCase
         yield [
             new class extends LivewireComponent
             {
+                #[Model]
                 public array $prices;
             },
             'prices',
@@ -244,6 +240,7 @@ final class DataAccessorTest extends TestCase
         yield [
             new class extends LivewireComponent
             {
+                #[Model]
                 private array $prices;
 
                 public function setPrices(array $prices): void
@@ -262,11 +259,8 @@ final class DataAccessorTest extends TestCase
         yield [
             new class extends LivewireComponent
             {
+                #[Model]
                 public Address $address;
-
-                public function __construct() {
-                    $this->address = new Address('', '', '');
-                }
             },
             'address.city',
             'New York',
@@ -274,6 +268,7 @@ final class DataAccessorTest extends TestCase
         yield [
             new class extends LivewireComponent
             {
+                #[Model]
                 public array $form = [];
             },
             'form.name',
@@ -282,13 +277,26 @@ final class DataAccessorTest extends TestCase
         yield [
             new class extends LivewireComponent
             {
+                #[Model]
+                public array $formData = [];
+            },
+            'formData.main.email',
+            'foo@gmail.com',
+        ];
+        yield [
+            new class extends LivewireComponent
+            {
+                /**
+                 * @var \Spiral\Livewire\Tests\App\Component\DataAccessorTest\DataTransferObject\Order[]
+                 */
+                #[Model]
                 public array $orders = [];
 
                 public function __construct()
                 {
                     $this->orders = [
-                        new Order(id: 1, items: [new Item(name: 'Test', price: 100.3)]),
-                        new Order(id: 2, items: [new Item(name: 'Foo', price: 80.2)]),
+                        Order::create(id: 1, items: [Item::create(name: 'Test', price: 100.3)]),
+                        Order::create(id: 2, items: [Item::create(name: 'Foo', price: 80.2)]),
                     ];
                 }
             },

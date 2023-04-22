@@ -18,19 +18,19 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 final class WithInterface extends LivewireComponent implements ShouldBeValidated
 {
     #[Model]
-    public string $name;
+    public string $name = '';
 
     #[Model]
-    public string $email;
+    public string $email = '';
 
     #[Model]
-    public string $password;
+    public string $password = '';
 
     #[Model]
-    public string $repeatedPassword;
+    public string $repeatedPassword = '';
 
     #[Model]
-    public int $age;
+    public ?int $age = null;
 
     #[Model]
     public array $address = [];

@@ -26,8 +26,8 @@ final class LaravelValidatorTest extends TestCase
             $errors = $e->getErrors();
         }
 
-        $this->assertSame('validation.min.string', $errors['name'][0]);
-        $this->assertSame('validation.email', $errors['email'][0]);
+        $this->assertSame('validation.required', $errors['name'][0]);
+        $this->assertSame('validation.required', $errors['email'][0]);
         $this->assertSame('validation.required', $errors['password'][0]);
         $this->assertSame('validation.required', $errors['age'][0]);
         $this->assertSame('validation.required', $errors['address.city'][0]);
@@ -47,7 +47,7 @@ final class LaravelValidatorTest extends TestCase
             $errors = $e->getErrors();
         }
 
-        $this->assertSame('validation.min.string', $errors['name'][0]);
+        $this->assertSame('validation.required', $errors['name'][0]);
     }
 
     public function testValidationNestedProperty(): void

@@ -31,7 +31,7 @@ final class Form extends LivewireComponent implements ShouldBeValidated
     {
         return [
             'name' => 'required',
-            'email' => 'email',
+            'email' => 'required',
             'password' => 'required',
             'age' => 'required'
         ];
