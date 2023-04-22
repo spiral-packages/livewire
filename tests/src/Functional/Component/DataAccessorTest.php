@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Spiral\Livewire\Tests\Functional\Component;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use Spiral\Livewire\Attribute\Model;
 use Spiral\Livewire\Component\DataAccessorInterface;
 use Spiral\Livewire\Component\LivewireComponent;
@@ -15,9 +16,7 @@ use Spiral\Livewire\Tests\Functional\TestCase;
 
 final class DataAccessorTest extends TestCase
 {
-    /**
-     * @dataProvider getValueDataProvider
-     */
+    #[DataProvider('getValueDataProvider')]
     public function testGetValue(LivewireComponent $component, string $propertyPath, mixed $expectedValue): void
     {
         $accessor = $this->getContainer()->get(DataAccessorInterface::class);
@@ -25,9 +24,7 @@ final class DataAccessorTest extends TestCase
         $this->assertSame($expectedValue, $accessor->getValue($component, $propertyPath));
     }
 
-    /**
-     * @dataProvider setValueDataProvider
-     */
+    #[DataProvider('setValueDataProvider')]
     public function testSetValue(LivewireComponent $component, string $propertyPath, mixed $value): void
     {
         $accessor = $this->getContainer()->get(DataAccessorInterface::class);
@@ -109,7 +106,7 @@ final class DataAccessorTest extends TestCase
         ], $accessor->getData($user));
     }
 
-    public function getValueDataProvider(): \Traversable
+    public static function getValueDataProvider(): \Traversable
     {
         yield [
             new class extends LivewireComponent
@@ -198,7 +195,7 @@ final class DataAccessorTest extends TestCase
         ];
     }
 
-    public function setValueDataProvider(): \Traversable
+    public static function setValueDataProvider(): \Traversable
     {
         yield [
             new class extends LivewireComponent

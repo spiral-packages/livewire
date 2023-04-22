@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Spiral\Livewire\Tests\Unit\Service;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Spiral\Livewire\Service\ArgumentTypecast;
 
 final class ArgumentTypecastTest extends TestCase
 {
-    /**
-     * @dataProvider argumentsDataProvider
-     */
+    #[DataProvider('argumentsDataProvider')]
     public function testCast(array $expected, array $arguments): void
     {
         $typecast = new ArgumentTypecast();
@@ -19,7 +18,7 @@ final class ArgumentTypecastTest extends TestCase
         $this->assertSame($expected, $typecast->cast($arguments, new \ReflectionMethod($this, 'methodForReflection')));
     }
 
-    public function argumentsDataProvider(): \Traversable
+    public static function argumentsDataProvider(): \Traversable
     {
         yield [['string' => 'bar'], ['string' => 'bar']];
         yield [['bool' => true], ['bool' => 'true']];

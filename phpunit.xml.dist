@@ -1,37 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.1/phpunit.xsd"
          backupGlobals="false"
+         bootstrap="vendor/autoload.php"
          colors="true"
-         verbose="true"
-         bootstrap="./vendor/autoload.php"
-         failOnRisky="true"
-         failOnWarning="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
+         processIsolation="false"
          stopOnFailure="false"
          executionOrder="random"
-         resolveDependencies="true"
->
-    <php>
-        <ini name="display_errors" value="On" />
-        <ini name="error_reporting" value="-1" />
-        <ini name="memory_limit" value="-1" />
-    </php>
-
+         failOnWarning="true"
+         failOnRisky="true"
+         failOnEmptyTestSuite="true"
+         beStrictAboutOutputDuringTests="true"
+         cacheDirectory=".phpunit.cache"
+         backupStaticProperties="false">
     <testsuites>
-        <testsuite name="Livewire Test Suite">
-            <directory>./tests/</directory>
+        <testsuite name="Livewire Integration Bridge">
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
-
     <coverage>
-        <include>
-            <directory>src</directory>
-        </include>
-        <exclude>
-            <directory>./tests</directory>
-        </exclude>
+        <report>
+            <html outputDirectory="build/coverage"/>
+            <text outputFile="build/coverage.txt"/>
+            <clover outputFile="build/logs/clover.xml"/>
+        </report>
     </coverage>
+    <logging>
+        <junit outputFile="build/report.junit.xml"/>
+    </logging>
+    <source>
+        <include>
+            <directory suffix=".php">./src</directory>
+        </include>
+    </source>
 </phpunit>
