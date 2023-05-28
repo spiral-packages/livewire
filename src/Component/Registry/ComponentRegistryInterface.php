@@ -12,7 +12,10 @@ use Spiral\Livewire\Exception\Component\ComponentNotFoundException;
  */
 interface ComponentRegistryInterface
 {
-    public function add(LivewireComponent $component): void;
+    /**
+     * @param non-empty-string $name
+     */
+    public function add(string $name, \Closure $component): void;
 
     /**
      * @param TComponentName $componentName

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Spiral\Livewire\Component\Registry;
 
+use Psr\Container\ContainerInterface;
 use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Exception\Component\ComponentNotFoundException;
 
@@ -13,14 +14,22 @@ use Spiral\Livewire\Exception\Component\ComponentNotFoundException;
 final class ComponentRegistry implements ComponentRegistryInterface
 {
     /**
-     * @var array<TComponentName, LivewireComponent>
+     * @var array<TComponentName, \Closure>
      */
     private array $components = [];
 
-    public function add(LivewireComponent $component): void
+    public function __construct(
+        private readonly ContainerInterface $container
+    ) {
+    }
+
+    /**
+     * @param non-empty-string $name
+     */
+    public function add(string $name, \Closure $component): void
     {
-        if (!$this->hasComponent($component->getComponentName())) {
-            $this->components[$component->getComponentName()] = $component;
+        if (!$this->hasComponent($name)) {
+            $this->components[$name] = $component;
         }
     }
 
@@ -35,7 +44,7 @@ final class ComponentRegistry implements ComponentRegistryInterface
             throw new ComponentNotFoundException(sprintf('Unable to find component: `%s`.', $componentName));
         }
 
-        return $this->components[$componentName];
+        return $this->components[$componentName]($this->container);
     }
 
     /**

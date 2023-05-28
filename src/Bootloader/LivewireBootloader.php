@@ -15,6 +15,8 @@ use Spiral\Livewire\Component\ChecksumManager;
 use Spiral\Livewire\Component\ChecksumManagerInterface;
 use Spiral\Livewire\Component\DataAccessor;
 use Spiral\Livewire\Component\DataAccessorInterface;
+use Spiral\Livewire\Component\Factory\AutowireFactory;
+use Spiral\Livewire\Component\Factory\FactoryInterface as ComponentFactory;
 use Spiral\Livewire\Component\PropertyHasher;
 use Spiral\Livewire\Component\PropertyHasherInterface;
 use Spiral\Livewire\Component\Registry\ComponentProcessorRegistry;
@@ -47,6 +49,7 @@ final class LivewireBootloader extends Bootloader
     protected const SINGLETONS = [
         ComponentRegistryInterface::class => ComponentRegistry::class,
         ComponentProcessorRegistry::class => ComponentProcessorRegistry::class,
+        ComponentFactory::class => AutowireFactory::class,
         ChecksumManagerInterface::class => ChecksumManager::class,
         PropertyHasherInterface::class => PropertyHasher::class,
         RendererInterface::class => Renderer::class,

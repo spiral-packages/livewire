@@ -4,24 +4,18 @@ declare(strict_types=1);
 
 namespace Spiral\Livewire\Component\Registry\Processor;
 
-use Psr\Container\ContainerInterface;
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Spiral\Attributes\ReaderInterface;
-use Spiral\Core\ResolverInterface;
 use Spiral\Livewire\Attribute\Component;
+use Spiral\Livewire\Component\Factory\FactoryInterface;
 use Spiral\Livewire\Component\LivewireComponent;
-use Spiral\Livewire\Component\PropertyHasherInterface;
 use Spiral\Livewire\Component\Registry\ComponentRegistryInterface;
-use Spiral\Livewire\Str;
-use Spiral\Router\RouterInterface;
 use Spiral\Tokenizer\TokenizationListenerInterface;
 use Spiral\Tokenizer\TokenizerListenerRegistryInterface;
-use Spiral\Views\ViewsInterface;
 
 final class AttributeProcessor implements TokenizationListenerInterface, ProcessorInterface
 {
     /**
-     * @var array<non-empty-string, \ReflectionClass>
+     * @var array<non-empty-string, \ReflectionClass<LivewireComponent>>
      */
     private array $components = [];
 
@@ -35,7 +29,7 @@ final class AttributeProcessor implements TokenizationListenerInterface, Process
     public function __construct(
         TokenizerListenerRegistryInterface $listenerRegistry,
         private readonly ReaderInterface $reader,
-        private readonly ContainerInterface $container,
+        private readonly FactoryInterface $factory,
         private readonly ComponentRegistryInterface $registry
     ) {
         $listenerRegistry->addListener($this);
@@ -48,22 +42,7 @@ final class AttributeProcessor implements TokenizationListenerInterface, Process
         }
 
         foreach ($this->components as $name => $ref) {
-            $component = $this->container->get($ref->getName());
-
-            \assert($component instanceof LivewireComponent);
-
-            $ref->getMethod('configure')->invoke(
-                $component,
-                $name,
-                $this->attributes[$name]->template ?? Str::kebab($ref->getName()),
-                $this->container->get(ViewsInterface::class),
-                $this->container->get(ResolverInterface::class),
-                $this->container->get(PropertyHasherInterface::class),
-                $this->container->get(EventDispatcherInterface::class),
-                $this->container->get(RouterInterface::class)
-            );
-
-            $this->registry->add($component);
+            $this->registry->add($name, $this->factory->create($name, $ref->getName(), $this->attributes[$name]));
         }
     }
 
@@ -72,7 +51,10 @@ final class AttributeProcessor implements TokenizationListenerInterface, Process
         $attr = $this->reader->firstClassMetadata($class, Component::class);
 
         if ($attr instanceof Component) {
-            $this->components[$attr->name ?? $class->getName()] = $class;
+            /** @var \ReflectionClass<LivewireComponent> $componentRef */
+            $componentRef = $class;
+
+            $this->components[$attr->name ?? $class->getName()] = $componentRef;
             $this->attributes[$attr->name ?? $class->getName()] = $attr;
         }
     }
