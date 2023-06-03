@@ -4,21 +4,19 @@ declare(strict_types=1);
 
 namespace Spiral\Livewire;
 
-use Psr\EventDispatcher\EventDispatcherInterface;
-use Spiral\Core\ResolverInterface;
 use Spiral\Http\Request\InputManager;
 use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Component\Registry\ComponentRegistryInterface;
-use Spiral\Livewire\Event\Component\FlushState;
 use Spiral\Livewire\Exception\Component\ComponentNotFoundException;
 use Spiral\Livewire\Exception\Component\RenderException;
 use Spiral\Livewire\Exception\InvalidTypeException;
 use Spiral\Livewire\Exception\RootTagMissingFromViewException;
+use Spiral\Livewire\Interceptor\Boot\BootInvoker;
+use Spiral\Livewire\Interceptor\Mount\MountInvoker;
 use Spiral\Livewire\Middleware\Component\Registry\DehydrationMiddlewareRegistryInterface;
 use Spiral\Livewire\Middleware\Component\Registry\HydrationMiddlewareRegistryInterface;
 use Spiral\Livewire\Middleware\Component\Registry\InitialDehydrationMiddlewareRegistryInterface;
 use Spiral\Livewire\Middleware\Component\Registry\InitialHydrationMiddlewareRegistryInterface;
-use Spiral\Livewire\Service\ArgumentTypecast;
 
 /**
  * @psalm-import-type TComponentName from LivewireComponent
@@ -31,9 +29,8 @@ final class Livewire
         private readonly HydrationMiddlewareRegistryInterface $hydrationMiddlewareRegistry,
         private readonly InitialDehydrationMiddlewareRegistryInterface $initialDehydrationMiddlewareRegistry,
         private readonly DehydrationMiddlewareRegistryInterface $dehydrationMiddlewareRegistry,
-        private readonly EventDispatcherInterface $dispatcher,
-        private readonly ResolverInterface $resolver,
-        private readonly ArgumentTypecast $typecast,
+        private readonly BootInvoker $bootInvoker,
+        private readonly MountInvoker $mountInvoker,
         private readonly InputManager $input
     ) {
     }
@@ -52,9 +49,7 @@ final class Livewire
     {
         $component = $this->componentRegistry->get($componentName);
 
-        if (\method_exists($component, 'boot')) {
-            $component->boot(...$this->resolver->resolveArguments(new \ReflectionMethod($component, 'boot')));
-        }
+        $this->bootInvoker->invoke($component);
 
         $request = new Request([
             'fingerprint' => [
@@ -71,12 +66,7 @@ final class Livewire
 
         $this->initialHydrate($component, $request);
 
-        if (\method_exists($component, 'mount')) {
-            $component->mount(...$this->resolver->resolveArguments(
-                new \ReflectionMethod($component, 'mount'),
-                $this->typecast->cast($params, new \ReflectionMethod($component, 'mount'))
-            ));
-        }
+        $this->mountInvoker->invoke($component, $params);
 
         $component->renderToView();
         $response = new Response($request->fingerprint, $request->memo);
@@ -99,9 +89,7 @@ final class Livewire
     public function subsequentRequest(string $componentName, Request $request): array
     {
         $component = $this->componentRegistry->get($componentName);
-        if (\method_exists($component, 'boot')) {
-            $component->boot(...$this->resolver->resolveArguments(new \ReflectionMethod($component, 'boot')));
-        }
+        $this->bootInvoker->invoke($component);
 
         $this->hydrate($component, $request);
 
@@ -143,11 +131,5 @@ final class Livewire
         foreach (\array_reverse($this->dehydrationMiddlewareRegistry->all()) as $middleware) {
             $middleware->dehydrate($component, $response);
         }
-    }
-
-    // TODO implement and call this method
-    private function flushState(LivewireComponent $component): void
-    {
-        $this->dispatcher->dispatch(new FlushState($component));
     }
 }

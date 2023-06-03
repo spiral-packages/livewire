@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Spiral\Livewire\Config;
 
 use Spiral\Core\Container\Autowire;
+use Spiral\Core\CoreInterceptorInterface;
 use Spiral\Core\InjectableConfig;
 use Spiral\Events\Config\EventListener;
 use Spiral\Livewire\Component\Registry\Processor\ProcessorInterface;
@@ -19,9 +20,11 @@ use Spiral\Livewire\Middleware\Component\InitialHydrationMiddleware;
  * @psalm-type TInitialDehydrationMiddleware = InitialDehydrationMiddleware|class-string<InitialDehydrationMiddleware>|Autowire<InitialDehydrationMiddleware>
  * @psalm-type TDehydrationMiddleware = DehydrationMiddleware|class-string<DehydrationMiddleware>|Autowire<DehydrationMiddleware>
  * @psalm-type TProcessor = ProcessorInterface|class-string<ProcessorInterface>|Autowire<ProcessorInterface>
+ * @psalm-type TInterceptor = CoreInterceptorInterface|class-string<CoreInterceptorInterface>|Autowire<CoreInterceptorInterface>
  *
  * @property array{
  *     listeners: array<class-string, EventListener|EventListener[]>,
+ *     interceptors: array{mount: TInterceptor[], boot: TInterceptor[]},
  *     initial_hydration_middleware: TInitialHydrationMiddleware[],
  *     hydration_middleware: THydrationMiddleware[],
  *     initial_dehydration_middleware: TInitialDehydrationMiddleware[],
@@ -36,6 +39,10 @@ final class LivewireConfig extends InjectableConfig
 
     protected array $config = [
         'listeners' => [],
+        'interceptors' => [
+            'mount' => [],
+            'boot' => []
+        ],
         'initial_hydration_middleware' => [],
         'hydration_middleware' => [],
         'initial_dehydration_middleware' => [],
@@ -50,6 +57,22 @@ final class LivewireConfig extends InjectableConfig
     public function getListeners(): array
     {
         return $this->config['listeners'] ?? [];
+    }
+
+    /**
+     * @return TInterceptor[]
+     */
+    public function getMountInterceptors(): array
+    {
+        return $this->config['interceptors']['mount'] ?? [];
+    }
+
+    /**
+     * @return TInterceptor[]
+     */
+    public function getBootInterceptors(): array
+    {
+        return $this->config['interceptors']['boot'] ?? [];
     }
 
     /**

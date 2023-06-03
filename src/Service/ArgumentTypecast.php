@@ -17,7 +17,7 @@ class ArgumentTypecast
         foreach ($arguments as $name => $value) {
             foreach ($method->getParameters() as $parameter) {
                 if ($name === $parameter->getName()) {
-                    if (($type = $this->getType($parameter)) === null) {
+                    if ($value === null || ($type = $this->getType($parameter)) === null) {
                         continue;
                     }
 

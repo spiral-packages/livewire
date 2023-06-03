@@ -27,6 +27,9 @@ final class SupportStacks
         }
     }
 
+    /**
+     * TODO fire event
+     */
     public function onFlushState(FlushState $event): void
     {
         $this->forStack[$event->component->getComponentName()] = [];

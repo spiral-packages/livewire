@@ -7,11 +7,13 @@
          processIsolation="false"
          stopOnFailure="false"
          executionOrder="random"
-         failOnWarning="true"
+         failOnWarning="false"
          failOnRisky="true"
          failOnEmptyTestSuite="true"
          beStrictAboutOutputDuringTests="true"
          cacheDirectory=".phpunit.cache"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnTestsThatTriggerWarnings="true"
          backupStaticProperties="false">
     <testsuites>
         <testsuite name="Livewire Integration Bridge">

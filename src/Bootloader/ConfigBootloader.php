@@ -6,6 +6,7 @@ namespace Spiral\Livewire\Bootloader;
 
 use Spiral\Boot\Bootloader\Bootloader;
 use Spiral\Config\ConfiguratorInterface;
+use Spiral\Cycle\Bootloader\CycleOrmBootloader;
 use Spiral\Events\Config\EventListener;
 use Spiral\Livewire\Component\Registry\Processor\AttributeProcessor;
 use Spiral\Livewire\Config\LivewireConfig;
@@ -17,6 +18,8 @@ use Spiral\Livewire\Event\Component\ComponentHydrateInitial;
 use Spiral\Livewire\Event\Component\ComponentHydrateSubsequent;
 use Spiral\Livewire\Event\Component\ComponentUpdating;
 use Spiral\Livewire\Event\Component\FlushState;
+use Spiral\Livewire\Interceptor\Mount\CycleInterceptor;
+use Spiral\Livewire\Interceptor\Mount\TypecasterInterceptor;
 use Spiral\Livewire\Listener\Component as Listener;
 use Spiral\Livewire\Middleware\Component as Middleware;
 
@@ -34,6 +37,17 @@ final class ConfigBootloader extends Bootloader
 
     private function initDefaultConfig(): void
     {
+        if (\class_exists(CycleOrmBootloader::class)) {
+            $interceptors = [
+                CycleInterceptor::class,
+                TypecasterInterceptor::class
+            ];
+        } else {
+            $interceptors = [
+                TypecasterInterceptor::class
+            ];
+        }
+
         $this->config->setDefaults(
             LivewireConfig::CONFIG,
             [
@@ -121,6 +135,10 @@ final class ConfigBootloader extends Bootloader
                         method: 'onFlushState',
                         priority: 10
                     ),
+                ],
+                'interceptors' => [
+                    'mount' => $interceptors,
+                    'boot' => []
                 ],
                 'initial_hydration_middleware' => [
                     Middleware\CallHydrationHooks::class,
