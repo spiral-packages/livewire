@@ -45,9 +45,7 @@ protected const LOAD = [
 
 ### Template engines
 
-> **Warning**
-> The package currently **doesn`t support the Stempler** template engine.
-> To use Livewire with the Spiral Framework, you will need to use the [**Twig**](https://github.com/spiral/twig-bridge) template engine.
+#### Twig
 
 To get started with **Livewire** and **Twig** in Spiral Framework application, need to add the
 `Spiral\Livewire\Bootloader\TwigBootloader` class to the list of bootloaders in your application.
@@ -60,11 +58,28 @@ Here's an example of how to do that:
 ```
 
 When the **TwigBootloader** is registered, it provides the `Spiral\Livewire\Twig\Extension\LivewireExtension` extension
-that allows to use the **livewire_styles** and **livewire_scripts** Twig functions and
-`Spiral\Livewire\Twig\NodeVisitor\LivewireNodeVisitor`.
+that allows to use the **livewire_styles**, **livewire_scripts**, **livewire** Twig functions.
 - **livewire_styles** and **livewire_scripts** - These functions are used to include the required Livewire CSS and JavaScript code.
-- **LivewireNodeVisitor** - This node visitor is responsible for processing and transforming Livewire
-  component tags, such as <livewire:counter foo="bar" />, into rendered HTML output with the component's initial state.
+- **livewire** - This function takes the `name` of the component as the first parameter and renders the
+  initial state of the component. Subsequent parameters will be passed to the component's **mount** method.
+
+#### Stempler
+
+To get started with **Livewire** and **Stempler** in Spiral Framework application, need to add the
+`Spiral\Livewire\Bootloader\StemplerBootloader` class to the list of bootloaders in your application.
+
+Here's an example of how to do that:
+
+```php
+    // ...
+    \Spiral\Livewire\Bootloader\StemplerBootloader::class,
+```
+
+When the **StemplerBootloader** is registered, it provides the `Spiral\Livewire\Template\Stempler\LivewireDirective`
+directive that allows to use the **livewireStyles**, **livewireScripts** directives and
+`Spiral\Livewire\Template\Stempler\NodeVisitor` that can render a Livewire component on a page using the
+**<livewire:name />** tag syntax.
+- **livewireStyles** and **livewireScripts** - These functions are used to include the required Livewire CSS and JavaScript code.
 
 ## Configuration
 
@@ -80,6 +95,8 @@ use Spiral\Livewire\Listener\Component\SupportLocales;
 use Spiral\Livewire\Middleware\Component\CallHydrationHooks;
 use Spiral\Livewire\Middleware\Component\CallPropertyHydrationHooks;
 use Spiral\Livewire\Middleware\Component\HydrateModelProperties;
+use Spiral\Livewire\Interceptor\Mount\CycleInterceptor;
+use Spiral\Livewire\Interceptor\Mount\TypecasterInterceptor;
 
 return [
     'listeners' => [
@@ -97,6 +114,13 @@ return [
             ),
         ],
         // ...
+    ],
+    'interceptors' => [
+        'mount' => [
+            CycleInterceptor::class,
+            TypecasterInterceptor::class,
+        ],
+        'boot' => []
     ],
     'initial_hydration_middleware' => [
         // ...
@@ -137,11 +161,13 @@ return [
 
 ## Usage
 
-Add the **livewire_styles()** in the head section and **livewire_scripts()** before the closing body tag:
+Add the required Livewire CSS and JavaScript code:
+
+### Twig
 
 ```html
 <!DOCTYPE html>
-<html lang="{{ locale }}">
+<html lang="@{locale}">
     <head>
         // ...
         {{ livewire_styles() }}
@@ -150,6 +176,22 @@ Add the **livewire_styles()** in the head section and **livewire_scripts()** bef
         {% block body %}{% endblock %}
         {{ livewire_scripts() }}
     </body>
+</html>
+```
+
+### Stempler
+
+```html
+<!DOCTYPE html>
+<html lang="@{locale}">
+<head>
+    // ...
+    @livewireStyles
+</head>
+<body>
+    // ...
+    @livewireScripts
+</body>
 </html>
 ```
 
@@ -162,7 +204,7 @@ use Spiral\Livewire\Attribute\Component;
 use Spiral\Livewire\Attribute\Model;
 use Spiral\Livewire\Component\LivewireComponent;
 
-#[Component(name: 'counter', template: 'components/counter.twig')]
+#[Component(name: 'counter', template: 'components/counter')]
 final class Counter extends LivewireComponent
 {
     #[Model]
@@ -184,14 +226,18 @@ Create a template:
 </div>
 ```
 
-Add **<livewire:counter />** anywhere in a Twig view and it will render.
+Call the Livewire component anywhere in your template.
+
+### Twig
 
 ```html
-{% extends "layout/base.twig" %}
+{{ livewire('counter') }}
+```
 
-{% block body %}
-    <livewire:counter />
-{% endblock %}
+### Stempler
+
+```html
+<livewire:counter />
 ```
 
 Now reload the page in the browser, you should see the counter component rendered.
@@ -296,6 +342,76 @@ required fields, and that the email field must be a valid email address.
   the data when the field changes. For example, a validator might validate an Email and display an error **before**
   the user clicks the Submit button.
 - Before calling the component method, the validator will check all the data and only call the method if all data is valid.
+
+### Interceptors
+
+Spiral provides a way for developers to customize the behavior of their executing `boot` and `mount` methods through
+interceptors. An interceptor is a piece of code that is executed before or after a mount or boot method is called.
+
+Some interceptors are provided by the package and enabled by default.
+- **Spiral\Livewire\Interceptor\Mount\CycleInterceptor** - This is `mount` interceptor.
+  Automatically resolves Cycle entities based on given parameter.
+- **Spiral\Livewire\Interceptor\Mount\TypecasterInterceptor** - This is `mount` interceptor.
+  Automatically converts the parameters passed to the mount method to the required type
+  (**bool**, **int**, **float**, **array**).
+
+> **Notice**
+> The `CycleInterceptor` requires [Cycle ORM Bridge](https://github.com/spiral/cycle-bridge).
+> If you don't use it, the interceptor will not be activated.
+
+You can create an interceptor yourself and register it in the config file.
+
+```php
+namespace App\Interceptor;
+
+use Spiral\Core\CoreInterceptorInterface;
+use Spiral\Core\CoreInterface;
+use Spiral\Livewire\Component\LivewireComponent;
+
+class SomeInterceptor implements CoreInterceptorInterface
+{
+    /**
+     * @param class-string $controller Component class name
+     * @param string $action method (boot or mount)
+     * @param array{
+     *     component: LivewireComponent,
+     *     reflection: \ReflectionMethod,
+     *     parameters: array
+     * } $parameters Array with additional parameters.
+     *  For the mount method, contains an array with the parameters that were passed to it.
+     */
+    public function process(string $controller, string $action, array $parameters, CoreInterface $core): mixed
+    {
+        // Some code before calling method mount or boot
+
+        $core->callAction($controller, $action, $parameters);
+
+        // Some code after calling method mount or boot
+
+        return null;
+    }
+}
+```
+
+```php
+// file app/config/livewire.php
+use App\Interceptor\SomeInterceptor;
+use Spiral\Livewire\Interceptor\Mount\CycleInterceptor;
+use Spiral\Livewire\Interceptor\Mount\TypecasterInterceptor;
+
+return [
+    'interceptors' => [
+        'mount' => [
+            SomeInterceptor::class,
+            CycleInterceptor::class,
+            TypecasterInterceptor::class,
+        ],
+        'boot' => [
+            SomeInterceptor::class,
+        ]
+    ],
+];
+```
 
 ## Testing
 
