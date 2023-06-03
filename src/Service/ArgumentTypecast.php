@@ -21,11 +21,16 @@ class ArgumentTypecast
                         continue;
                     }
 
+                    if ($value === null && $parameter->allowsNull()) {
+                        continue;
+                    }
+
                     $arguments[$name] = match (true) {
                         $type->getName() === 'bool' => \filter_var($value, \FILTER_VALIDATE_BOOL),
                         $type->getName() === 'int' => (int) $value,
                         $type->getName() === 'float' => (float) $value,
-                        $type->getName() === 'array' => \json_decode($value, true, 512, JSON_THROW_ON_ERROR),
+                        $type->getName() === 'array' && !empty($value) =>
+                            \json_decode($value, true, 512, JSON_THROW_ON_ERROR),
                         default => $value
                     };
                 }

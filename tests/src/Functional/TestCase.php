@@ -6,6 +6,7 @@ namespace Spiral\Livewire\Tests\Functional;
 
 use Spiral\Bootloader\Http\RouterBootloader;
 use Spiral\Core\ContainerScope;
+use Spiral\Cycle\Bootloader\CycleOrmBootloader;
 use Spiral\Livewire\Bootloader\LivewireBootloader;
 use Spiral\Livewire\Bootloader\StemplerBootloader;
 use Spiral\Livewire\Bootloader\TwigBootloader;
@@ -56,6 +57,7 @@ class TestCase extends \Spiral\Testing\TestCase
             LivewireBootloader::class,
             RouterBootloader::class,
             NyholmBootloader::class,
+            CycleOrmBootloader::class
         ];
 
         $bootloaders[] = match (static::TEMPLATE_ENGINE) {

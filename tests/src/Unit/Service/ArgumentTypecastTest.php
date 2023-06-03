@@ -28,9 +28,16 @@ final class ArgumentTypecastTest extends TestCase
         yield [['int' => 3], ['int' => '3']];
         yield [['float' => 5.4], ['float' => '5.4']];
         yield [['array' => ['foo' => 'bar', 'baz' => 7]], ['array' => '{"foo":"bar","baz":7}']];
+        yield [['nullable' => null], ['nullable' => null]];
     }
 
-    private function methodForReflection(string $string, bool $bool, int $int, float $float, array $array): void
-    {
+    private function methodForReflection(
+        string $string,
+        bool $bool,
+        int $int,
+        float $float,
+        array $array,
+        ?int $nullable = null
+    ): void {
     }
 }
