@@ -81,7 +81,7 @@ final class ComponentBootloader extends Bootloader
         MountCore $core,
         LivewireConfig $config,
         FactoryInterface $factory,
-        ?EventDispatcherInterface $dispatcher = null,
+        EventDispatcherInterface $dispatcher
     ): MountInvoker {
         $core = new InterceptableCore($core, $dispatcher);
 
@@ -99,7 +99,7 @@ final class ComponentBootloader extends Bootloader
         BootCore $core,
         LivewireConfig $config,
         FactoryInterface $factory,
-        ?EventDispatcherInterface $dispatcher = null,
+        EventDispatcherInterface $dispatcher
     ): BootInvoker {
         $core = new InterceptableCore($core, $dispatcher);
 

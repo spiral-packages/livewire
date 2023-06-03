@@ -17,7 +17,11 @@ class ArgumentTypecast
         foreach ($arguments as $name => $value) {
             foreach ($method->getParameters() as $parameter) {
                 if ($name === $parameter->getName()) {
-                    if ($value === null || ($type = $this->getType($parameter)) === null) {
+                    if (($type = $this->getType($parameter)) === null) {
+                        continue;
+                    }
+
+                    if ($value === null && $parameter->allowsNull()) {
                         continue;
                     }
 
@@ -25,7 +29,8 @@ class ArgumentTypecast
                         $type->getName() === 'bool' => \filter_var($value, \FILTER_VALIDATE_BOOL),
                         $type->getName() === 'int' => (int) $value,
                         $type->getName() === 'float' => (float) $value,
-                        $type->getName() === 'array' => \json_decode($value, true, 512, JSON_THROW_ON_ERROR),
+                        $type->getName() === 'array' && !empty($value) =>
+                            \json_decode($value, true, 512, JSON_THROW_ON_ERROR),
                         default => $value
                     };
                 }
