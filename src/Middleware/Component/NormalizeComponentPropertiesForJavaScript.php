@@ -29,7 +29,11 @@ final class NormalizeComponentPropertiesForJavaScript extends AbstractDataNormal
     {
         foreach ($this->dataAccessor->getData($component) as $key => $value) {
             if (\is_array($value)) {
-                $component->$key = $this->reindexArrayWithNumericKeysOtherwiseJavaScriptWillMessWithTheOrder($value);
+                $this->dataAccessor->setValue(
+                    $component,
+                    $key,
+                    $this->reindexArrayWithNumericKeysOtherwiseJavaScriptWillMessWithTheOrder($value)
+                );
             }
         }
     }
