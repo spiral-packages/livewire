@@ -101,6 +101,11 @@ final class Livewire
         return $response->toSubsequentResponse($request);
     }
 
+    /**
+     * @param non-empty-string $name
+     *
+     * @return non-empty-string
+     */
     public static function hashComponentName(string $name): string
     {
         if (\class_exists($name) || \interface_exists($name)) {
@@ -110,7 +115,10 @@ final class Livewire
             return $hash;
         }
 
-        return \str_replace('\\', '-', $name);
+        /** @var non-empty-string $name */
+        $name = \str_replace('\\', '-', $name);
+
+        return $name;
     }
 
     private function initialHydrate(LivewireComponent $component, Request $request): void
