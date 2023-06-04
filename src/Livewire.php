@@ -47,7 +47,7 @@ final class Livewire
      */
     public function initialRequest(string $componentName, array $params): string
     {
-        $component = $this->componentRegistry->get($componentName);
+        $component = $this->componentRegistry->get(self::hashComponentName($componentName));
 
         $this->bootInvoker->invoke($component);
 
@@ -88,7 +88,7 @@ final class Livewire
      */
     public function subsequentRequest(string $componentName, Request $request): array
     {
-        $component = $this->componentRegistry->get($componentName);
+        $component = $this->componentRegistry->get(self::hashComponentName($componentName));
         $this->bootInvoker->invoke($component);
 
         $this->hydrate($component, $request);
@@ -99,6 +99,26 @@ final class Livewire
         $this->dehydrate($component, $response);
 
         return $response->toSubsequentResponse($request);
+    }
+
+    /**
+     * @param non-empty-string $name
+     *
+     * @return non-empty-string
+     */
+    public static function hashComponentName(string $name): string
+    {
+        if (\class_exists($name) || \interface_exists($name)) {
+            /** @var non-empty-string $hash */
+            $hash = \md5($name);
+
+            return $hash;
+        }
+
+        /** @var non-empty-string $name */
+        $name = \str_replace('\\', '-', $name);
+
+        return $name;
     }
 
     private function initialHydrate(LivewireComponent $component, Request $request): void

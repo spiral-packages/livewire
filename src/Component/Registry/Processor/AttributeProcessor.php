@@ -9,6 +9,7 @@ use Spiral\Livewire\Attribute\Component;
 use Spiral\Livewire\Component\Factory\FactoryInterface;
 use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Component\Registry\ComponentRegistryInterface;
+use Spiral\Livewire\Livewire;
 use Spiral\Tokenizer\TokenizationListenerInterface;
 use Spiral\Tokenizer\TokenizerListenerRegistryInterface;
 
@@ -54,8 +55,8 @@ final class AttributeProcessor implements TokenizationListenerInterface, Process
             /** @var \ReflectionClass<LivewireComponent> $componentRef */
             $componentRef = $class;
 
-            $this->components[$attr->name ?? $class->getName()] = $componentRef;
-            $this->attributes[$attr->name ?? $class->getName()] = $attr;
+            $this->components[Livewire::hashComponentName($attr->name ?? $class->getName())] = $componentRef;
+            $this->attributes[Livewire::hashComponentName($attr->name ?? $class->getName())] = $attr;
         }
     }
 
