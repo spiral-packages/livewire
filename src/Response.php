@@ -6,6 +6,7 @@ namespace Spiral\Livewire;
 
 use Spiral\Livewire\Exception\RootTagMissingFromViewException;
 use Spiral\Livewire\Service\Attribute;
+use Symfony\Component\PropertyAccess\PropertyPath;
 
 /**
  * @psalm-import-type TFingerprint from Request
@@ -119,10 +120,8 @@ final class Response
 
         // Make sure any data marked as "dirty" is present in the resulting data payload.
         foreach ($this->effects['dirty'] ?? [] as $property) {
-            $parts = explode('.', $property);
-            $property = reset($parts);
-
-            $dirtyMemo['data'][$property] = $this->memo['data'][$property];
+            $propertyPath = new PropertyPath($property);
+            $dirtyMemo['data'][$propertyPath->getElement(0)] = $this->memo['data'][$propertyPath->getElement(0)];
         }
 
         return [
