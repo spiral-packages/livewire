@@ -106,6 +106,19 @@ final class DataAccessorTest extends TestCase
         ], $accessor->getData($user));
     }
 
+    #[DataProvider('pathsDataProvider')]
+    public function testHasModel(string $path, bool $expected): void
+    {
+        $component = new class () extends LivewireComponent {
+            #[Model]
+            public array $data;
+        };
+
+        $accessor = $this->getContainer()->get(DataAccessorInterface::class);
+
+        $this->assertSame($expected, $accessor->hasModel($component, $path));
+    }
+
     public static function getValueDataProvider(): \Traversable
     {
         yield [
@@ -300,5 +313,15 @@ final class DataAccessorTest extends TestCase
             'orders.1.items.0.name',
             'Test 2',
         ];
+    }
+
+    public static function pathsDataProvider(): \Traversable
+    {
+        yield ['data', true];
+        yield ['data.foo', true];
+        yield ['data[foo]', true];
+        yield ['foo', false];
+        yield ['foo.bar', false];
+        yield ['foo[bar]', false];
     }
 }

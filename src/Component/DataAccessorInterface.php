@@ -23,7 +23,7 @@ interface DataAccessorInterface
     public function setValue(LivewireComponent $component, string $propertyPath, mixed $value): void;
 
     /**
-     * @param non-empty-string $property
+     * @param non-empty-string $propertyPath
      */
-    public function hasModel(LivewireComponent $component, string $property): bool;
+    public function hasModel(LivewireComponent $component, string $propertyPath): bool;
 }
