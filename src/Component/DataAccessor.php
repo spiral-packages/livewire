@@ -8,6 +8,7 @@ use Adbar\Dot;
 use Spiral\Attributes\ReaderInterface;
 use Spiral\Livewire\Attribute\Model;
 use Spiral\Livewire\Exception\Component\ModelNotWritableException;
+use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Serializer;
 
@@ -62,14 +63,16 @@ final class DataAccessor implements DataAccessorInterface
     }
 
     /**
-     * @param non-empty-string $property
+     * @param non-empty-string $propertyPath
      */
-    public function hasModel(LivewireComponent $component, string $property): bool
+    public function hasModel(LivewireComponent $component, string $propertyPath): bool
     {
+        $path = new PropertyPath($propertyPath);
+
         foreach ((new \ReflectionClass($component))->getProperties() as $reflection) {
             $model = $this->reader->firstPropertyMetadata($reflection, Model::class);
 
-            if ((null !== $model) && $property === $reflection->getName()) {
+            if ((null !== $model) && $path->getElement(0) === $reflection->getName()) {
                 return true;
             }
         }
