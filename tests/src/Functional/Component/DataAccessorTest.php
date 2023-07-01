@@ -13,6 +13,8 @@ use Spiral\Livewire\Tests\App\Component\DataAccessorTest\DataTransferObject\Addr
 use Spiral\Livewire\Tests\App\Component\DataAccessorTest\DataTransferObject\Item;
 use Spiral\Livewire\Tests\App\Component\DataAccessorTest\DataTransferObject\Order;
 use Spiral\Livewire\Tests\Functional\TestCase;
+use Spiral\Marshaller\Meta\Marshal;
+use Spiral\Marshaller\Meta\MarshalArray;
 
 final class DataAccessorTest extends TestCase
 {
@@ -133,6 +135,7 @@ final class DataAccessorTest extends TestCase
         yield [
             new class extends LivewireComponent
             {
+                #[Marshal]
                 #[Model]
                 private string $name = 'foo';
 
@@ -156,6 +159,7 @@ final class DataAccessorTest extends TestCase
         yield [
             new class extends LivewireComponent
             {
+                #[Marshal]
                 #[Model]
                 private array $prices = [10, 100.0];
 
@@ -193,6 +197,7 @@ final class DataAccessorTest extends TestCase
             new class extends LivewireComponent
             {
                 #[Model]
+                #[MarshalArray(of: Order::class)]
                 public array $orders = [];
 
                 public function __construct()
@@ -223,6 +228,7 @@ final class DataAccessorTest extends TestCase
             new class extends LivewireComponent
             {
                 #[Model]
+                #[Marshal]
                 private string $name;
 
                 public function setName(string $name): void
@@ -251,6 +257,7 @@ final class DataAccessorTest extends TestCase
             new class extends LivewireComponent
             {
                 #[Model]
+                #[Marshal]
                 private array $prices;
 
                 public function setPrices(array $prices): void

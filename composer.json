@@ -15,15 +15,15 @@
         "spiral/encrypter": "^3.7",
         "spiral/scaffolder": "^3.7",
         "symfony/property-access": "^5.4.22 || ^6.0",
-        "spiral-packages/symfony-serializer": "^2.0"
+        "spiral/marshaller-bridge": "^1.0"
     },
     "require-dev": {
         "spiral/twig-bridge": "^2.0.1",
         "roave/security-advisories": "dev-latest",
-        "phpunit/phpunit": "^10.1",
-        "friendsofphp/php-cs-fixer": "^3.8",
+        "phpunit/phpunit": "^10.2",
+        "friendsofphp/php-cs-fixer": "^3.19",
         "spiral/testing": "^2.3",
-        "vimeo/psalm": "^5.9",
+        "vimeo/psalm": "^5.13",
         "spiral/validator": "^1.3",
         "spiral/translator": "^3.7",
         "spiral/nyholm-bridge": "^1.3",
@@ -66,6 +66,16 @@
             ]
         }
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/spiral/marshaller-bridge"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/spiral/marshaller"
+        }
+    ],
     "minimum-stability": "dev",
     "prefer-stable": true
 }

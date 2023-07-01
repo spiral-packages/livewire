@@ -6,9 +6,11 @@ namespace Spiral\Livewire\Tests\App\Middleware\Component\NormalizeComponentPrope
 
 use Spiral\Livewire\Attribute\Model;
 use Spiral\Livewire\Component\LivewireComponent;
+use Spiral\Marshaller\Meta\Marshal;
 
 final class InvalidPrivateComponent extends LivewireComponent
 {
+    #[Marshal]
     #[Model]
     private array $data = [
         3 => 'foo',

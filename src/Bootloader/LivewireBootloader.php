@@ -9,8 +9,8 @@ use Spiral\Boot\DirectoriesInterface;
 use Spiral\Bootloader\Security\EncrypterBootloader;
 use Spiral\Livewire\Controller\LivewireController;
 use Spiral\Livewire\WireTrait;
+use Spiral\MarshallerBridge\Bootloader\MarshallerBootloader;
 use Spiral\Router\Loader\Configurator\RoutingConfigurator;
-use Spiral\Serializer\Symfony\Bootloader\SerializerBootloader;
 use Spiral\Tokenizer\Bootloader\TokenizerListenerBootloader;
 use Spiral\Views\Bootloader\ViewsBootloader;
 
@@ -25,7 +25,7 @@ final class LivewireBootloader extends Bootloader
         ComponentBootloader::class,
         ComponentMiddlewareBootloader::class,
         ListenerBootloader::class,
-        SerializerBootloader::class,
+        MarshallerBootloader::class,
     ];
 
     public function init(ViewsBootloader $views, DirectoriesInterface $dirs): void

@@ -8,6 +8,8 @@ use Spiral\Livewire\Attribute\Component;
 use Spiral\Livewire\Attribute\Model;
 use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Tests\App\Component\DataAccessorTest\DataTransferObject\Address;
+use Spiral\Livewire\Tests\App\Component\DataAccessorTest\DataTransferObject\Order;
+use Spiral\Marshaller\Meta\MarshalArray;
 
 #[Component(name: 'component-data-accessor-test-user')]
 final class User extends LivewireComponent
@@ -28,6 +30,7 @@ final class User extends LivewireComponent
     public array $phoneNumbers = [];
 
     #[Model]
+    #[MarshalArray(of: Order::class)]
     public array $orders = [];
 
     public string $publicNonModelProperty = 'foo';
