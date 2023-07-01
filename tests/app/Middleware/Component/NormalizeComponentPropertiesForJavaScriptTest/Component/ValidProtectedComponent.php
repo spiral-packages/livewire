@@ -6,9 +6,11 @@ namespace Spiral\Livewire\Tests\App\Middleware\Component\NormalizeComponentPrope
 
 use Spiral\Livewire\Attribute\Model;
 use Spiral\Livewire\Component\LivewireComponent;
+use Spiral\Marshaller\Meta\Marshal;
 
 final class ValidProtectedComponent extends LivewireComponent
 {
+    #[Marshal]
     #[Model]
     protected array $data = [
         'foo',

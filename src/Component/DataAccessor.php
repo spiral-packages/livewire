@@ -7,15 +7,13 @@ namespace Spiral\Livewire\Component;
 use Adbar\Dot;
 use Spiral\Attributes\ReaderInterface;
 use Spiral\Livewire\Attribute\Model;
-use Spiral\Livewire\Exception\Component\ModelNotWritableException;
+use Spiral\Marshaller\MarshallerInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
 final class DataAccessor implements DataAccessorInterface
 {
     public function __construct(
-        private readonly Serializer $serializer,
+        private readonly MarshallerInterface $marshaller,
         private readonly ReaderInterface $reader
     ) {
     }
@@ -30,26 +28,24 @@ final class DataAccessor implements DataAccessorInterface
         }
 
         /** @var array $data */
-        $data = $this->serializer->normalize(data: $component, context: [AbstractNormalizer::ATTRIBUTES => $models]);
+        $data = \array_filter(
+            $this->marshaller->marshal($component),
+            static fn (string $key) => \in_array($key, $models, true),
+            \ARRAY_FILTER_USE_KEY
+        );
 
         return $data;
     }
 
     /**
      * @param non-empty-string $propertyPath
-     *
-     * @throws ModelNotWritableException
      */
     public function setValue(LivewireComponent $component, string $propertyPath, mixed $value): void
     {
         $data = new Dot($this->getData($component));
         $data->set($propertyPath, $value);
 
-        $this->serializer->denormalize(
-            data: $data->all(),
-            type: $component::class,
-            context: [AbstractNormalizer::OBJECT_TO_POPULATE => $component]
-        );
+        $this->marshaller->unmarshal($data->all(), $component);
     }
 
     /**

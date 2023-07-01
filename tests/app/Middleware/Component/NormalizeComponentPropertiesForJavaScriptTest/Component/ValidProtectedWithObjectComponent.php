@@ -7,9 +7,11 @@ namespace Spiral\Livewire\Tests\App\Middleware\Component\NormalizeComponentPrope
 use Spiral\Livewire\Attribute\Model;
 use Spiral\Livewire\Component\LivewireComponent;
 use Spiral\Livewire\Tests\App\Middleware\Component\NormalizeComponentPropertiesForJavaScriptTest\Entity\User;
+use Spiral\Marshaller\Meta\Marshal;
 
 final class ValidProtectedWithObjectComponent extends LivewireComponent
 {
+    #[Marshal]
     #[Model]
     protected array $data = [
         'foo',
@@ -17,6 +19,7 @@ final class ValidProtectedWithObjectComponent extends LivewireComponent
         'baz'
     ];
 
+    #[Marshal]
     #[Model]
     protected User $user;
 

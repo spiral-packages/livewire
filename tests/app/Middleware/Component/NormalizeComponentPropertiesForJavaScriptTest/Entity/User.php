@@ -7,8 +7,8 @@ namespace Spiral\Livewire\Tests\App\Middleware\Component\NormalizeComponentPrope
 final class User
 {
     public function __construct(
-        public readonly int $id,
-        public readonly string $name
+        public int $id,
+        public string $name
     ) {
     }
 }
