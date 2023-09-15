@@ -9,9 +9,9 @@
 [![type-coverage](https://shepherd.dev/github/spiral-packages/livewire/coverage.svg)](https://shepherd.dev/github/spiral-packages/livewire)
 [![psalm-level](https://shepherd.dev/github/spiral-packages/livewire/level.svg)](https://shepherd.dev/github/spiral-packages/livewire)
 
-## WARNING!
 
-The package is under active development. Don't use it in your applications.
+## WARNING!
+This package is currently under active development. It is not recommended for use in production environments due to potential instability.
 
 ## Requirements
 
